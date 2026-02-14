@@ -155,16 +155,21 @@ function AnimatedStat({ target, suffix, label, icon: Icon }: {
     );
 }
 
-/* ─── Section Reveal Wrapper ─── */
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+/* ─── Section Reveal Wrapper (Choreographed) ─── */
+function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'scale' }) {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-60px' });
+    const isInView = useInView(ref, { once: true, margin: '-80px' });
+    const variants = {
+        up: { hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0 } },
+        left: { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0 } },
+        scale: { hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1 } },
+    };
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={variants[direction].hidden}
+            animate={isInView ? variants[direction].visible : variants[direction].hidden}
+            transition={{ duration: 0.8, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
             {children}
         </motion.div>
@@ -201,7 +206,7 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
                 style={{ rotateX: springRotateX, rotateY: springRotateY, transformPerspective: 1000 }}
                 onMouseMove={handleMouse}
                 onMouseLeave={handleMouseLeave}
-                className={`group relative rounded-3xl overflow-hidden h-[440px] ${event.soldPercentage < 100 ? 'cursor-pointer' : 'cursor-default'}`}
+                className={`group relative rounded-3xl overflow-hidden h-[440px] holographic-card ${event.soldPercentage < 100 ? 'cursor-pointer' : 'cursor-default'}`}
                 onClick={() => event.soldPercentage < 100 && veloBus.emit('open-agent', { message: `I want to book tickets for ${event.title}` })}
             >
                 {/* Image */}
@@ -212,10 +217,6 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
                 />
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
-                {/* Hover shine sweep */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-x-[-100%] group-hover:translate-x-[100%]"
-                    style={{ transition: 'transform 0.7s ease, opacity 0.5s ease' }}
-                />
 
                 {/* Tag */}
                 <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
@@ -295,9 +296,11 @@ export default function Home() {
 
                 {/* Animated mesh background */}
                 <div className="absolute inset-0 mesh-background" />
-                <div className="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-velo-violet/15 rounded-full blur-[140px] animate-pulse-slow" />
-                <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-velo-cyan/10 rounded-full blur-[120px] animate-pulse-slow" />
-                <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-velo-rose/8 rounded-full blur-[100px] animate-float" />
+                {/* Aurora blobs — organic, alive */}
+                <div className="absolute top-[5%] left-[10%] w-[600px] h-[600px] bg-velo-violet/20 rounded-full blur-[160px] aurora-blob-1" />
+                <div className="absolute bottom-[5%] right-[5%] w-[500px] h-[500px] bg-velo-cyan/15 rounded-full blur-[140px] aurora-blob-2" />
+                <div className="absolute top-[40%] left-[45%] -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-velo-rose/10 rounded-full blur-[120px] aurora-blob-3" />
+                <div className="absolute top-[20%] right-[20%] w-[350px] h-[350px] bg-velo-emerald/8 rounded-full blur-[100px] aurora-blob-1" style={{ animationDelay: '-4s' }} />
 
                 {/* Grid overlay */}
                 <div className="absolute inset-0 opacity-[0.02]"
@@ -462,17 +465,17 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {features.map((feature, i) => (
                             <Reveal key={feature.title} delay={i * 0.1}>
-                                <div className="glass-card-hover rounded-2xl p-8 cursor-default group">
-                                    <div className="flex items-start justify-between mb-5">
-                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
+                                <div className="glass-card-hover rounded-2xl p-8 cursor-default group holographic-card magnetic-hover">
+                                    <div className="flex items-start justify-between mb-5 relative z-10">
+                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-velo-violet/20 transition-all duration-500`}>
                                             <feature.icon className="w-7 h-7 text-white" />
                                         </div>
                                         <span className="text-[11px] font-medium text-velo-text-muted border border-white/10 rounded-full px-3 py-1">
                                             {feature.stat}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                                    <p className="text-sm text-velo-text-secondary leading-relaxed">{feature.description}</p>
+                                    <h3 className="text-xl font-bold text-white mb-2 relative z-10">{feature.title}</h3>
+                                    <p className="text-sm text-velo-text-secondary leading-relaxed relative z-10">{feature.description}</p>
                                 </div>
                             </Reveal>
                         ))}
