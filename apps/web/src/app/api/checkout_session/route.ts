@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
 
         const stripe = new Stripe(apiKey.trim(), {
             apiVersion: '2023-10-16',
+            maxNetworkRetries: 3, // Retry up to 3 times on network errors
+            timeout: 10000, // 10 second timeout
         } as any);
 
         const { price, title, quantity = 1 } = await req.json();
