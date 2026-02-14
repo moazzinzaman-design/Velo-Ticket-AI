@@ -64,13 +64,26 @@ export async function POST(req: NextRequest) {
         console.log('Session URL:', session.url);
         return NextResponse.json({ sessionId: session.id, url: session.url });
     } catch (err: any) {
-        console.error('Stripe API Error:', err);
+        console.error('=== STRIPE ERROR DETAILS ===');
+        console.error('Error name:', err?.name);
+        console.error('Error message:', err?.message);
+        console.error('Error stack:', err?.stack);
+
         if (err instanceof Stripe.errors.StripeError) {
             console.error('Stripe Error Type:', err.type);
             console.error('Stripe Error Code:', err.code);
             console.error('Stripe Error Param:', err.param);
-            console.error('Stripe Error Message:', err.message);
+            console.error('Stripe Raw Error:', JSON.stringify(err.raw, null, 2));
+        } else {
+            console.error('Non-Stripe Error:', JSON.stringify(err, null, 2));
         }
-        return NextResponse.json({ error: err.message }, { status: 500 });
+
+        return NextResponse.json({
+            error: err.message || 'Payment initialization failed',
+            details: err instanceof Stripe.errors.StripeError ? {
+                type: err.type,
+                code: err.code
+            } : undefined
+        }, { status: 500 });
     }
 }
