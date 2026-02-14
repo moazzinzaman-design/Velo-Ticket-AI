@@ -12,6 +12,13 @@
   --velo-emerald: 16 185 129;
   --velo-amber: 245 158 11;
 
+  /* Magic Premium Colors */
+  --magic-purple: 139 92 246;
+  --magic-pink: 236 72 153;
+  --magic-blue: 59 130 246;
+  --magic-gold: 251 191 36;
+  --magic-teal: 20 184 166;
+
   /* Surfaces */
   --velo-bg-deep: 7 7 12;
   --velo-bg-card: 14 14 25;
@@ -25,6 +32,14 @@
   /* Gradients */
   --gradient-brand: linear-gradient(135deg, rgb(var(--velo-violet)), rgb(var(--velo-indigo)), rgb(var(--velo-cyan)));
   --gradient-hot: linear-gradient(135deg, rgb(var(--velo-rose)), rgb(var(--velo-violet)));
+  --gradient-magic: linear-gradient(135deg, rgb(var(--magic-purple)) 0%, rgb(var(--magic-pink)) 50%, rgb(var(--magic-blue)) 100%);
+  --gradient-gold: linear-gradient(135deg, rgb(var(--magic-gold)) 0%, rgb(var(--magic-amber)) 100%);
+  --gradient-holographic: linear-gradient(135deg,
+      rgb(var(--magic-purple)) 0%,
+      rgb(var(--magic-pink)) 25%,
+      rgb(var(--magic-blue)) 50%,
+      rgb(var(--magic-teal)) 75%,
+      rgb(var(--magic-purple)) 100%);
   --gradient-aurora: linear-gradient(135deg,
       rgba(var(--velo-violet), 0.4) 0%,
       rgba(var(--velo-cyan), 0.3) 25%,
@@ -278,6 +293,168 @@ body {
     background: inherit;
     animation: pulse-live-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* ─── Premium Magic Effects ─── */
+
+  /* Shimmer border effect */
+  .shimmer-border {
+    position: relative;
+    background: rgba(var(--velo-bg-card), 0.6);
+    backdrop-filter: blur(24px);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .shimmer-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-holographic);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: shimmer-rotate 3s linear infinite;
+    background-size: 200% 200%;
+  }
+
+  /* Holographic text */
+  .holographic-text {
+    background: var(--gradient-holographic);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: holographic-shift 4s ease infinite;
+  }
+
+  /* Sparkle effect */
+  .sparkle {
+    position: relative;
+  }
+
+  .sparkle::after {
+    content: '✨';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 1.25rem;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+  }
+
+  /* Magic glow card */
+  .magic-glow-card {
+    background: rgba(var(--velo-bg-card), 0.7);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .magic-glow-card::before {
+    content: '';
+    position: absolute;
+    inset: -100%;
+    background: conic-gradient(from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(var(--magic-purple), 0.3) 90deg,
+        transparent 180deg,
+        rgba(var(--magic-pink), 0.3) 270deg,
+        transparent 360deg);
+    animation: magic-rotate 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .magic-glow-card:hover::before {
+    opacity: 1;
+  }
+
+  .magic-glow-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5),
+      0 0 60px rgba(var(--magic-purple), 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-4px);
+  }
+
+  /* Premium button with magic effect */
+  .btn-magic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: white;
+    background: var(--gradient-magic);
+    background-size: 200% 200%;
+    box-shadow: 0 4px 20px rgba(var(--magic-purple), 0.4),
+      0 0 40px rgba(var(--magic-pink), 0.2);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    border: none;
+  }
+
+  .btn-magic::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .btn-magic:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 32px rgba(var(--magic-purple), 0.6),
+      0 0 60px rgba(var(--magic-pink), 0.3);
+    animation: holographic-shift 2s ease infinite;
+  }
+
+  .btn-magic:hover::before {
+    opacity: 1;
+  }
+
+  .btn-magic:active {
+    transform: translateY(0) scale(1);
+  }
+
+  /* Floating particles container */
+  .floating-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(var(--magic-purple), 0.6);
+    border-radius: 50%;
+    animation: particle-float 15s linear infinite;
+  }
+
+  .particle:nth-child(2n) {
+    background: rgba(var(--magic-pink), 0.6);
+    animation-duration: 18s;
+    animation-delay: -5s;
+  }
+
+  .particle:nth-child(3n) {
+    background: rgba(var(--magic-blue), 0.6);
+    animation-duration: 20s;
+    animation-delay: -10s;
+  }
 }
 
 /* ─── Keyframes ─── */
@@ -402,6 +579,52 @@ body {
 
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes holographic-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes shimmer-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes sparkle-twinkle {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes magic-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 

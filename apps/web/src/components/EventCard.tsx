@@ -78,7 +78,7 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
             style={{ rotateX: springRotateX, rotateY: springRotateY, transformPerspective: 800 }}
             onMouseMove={handleMouse}
             onMouseLeave={handleMouseLeave}
-            className={`group relative rounded-2xl overflow-hidden h-[450px] cursor-pointer ${isSoldOut ? 'opacity-70' : ''}`}
+            className={`group relative rounded-2xl overflow-hidden h-[450px] cursor-pointer shimmer-border ${isSoldOut ? 'opacity-70' : ''}`}
             onClick={() => !isSoldOut && veloBus.emit('open-agent', { message: `I want to book tickets for ${event.title}` })}
         >
             <img
@@ -88,6 +88,11 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
             <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            {/* Magic glow effect on hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-br from-magic-purple/20 via-magic-pink/20 to-magic-blue/20 blur-2xl" />
+            </div>
 
             {/* Tag */}
             <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start">
@@ -126,7 +131,7 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
 
             {/* Content */}
             <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-                <h3 className="text-xl font-bold text-white mb-1.5 group-hover:translate-y-[-3px] transition-transform duration-500">
+                <h3 className="text-xl font-bold text-white mb-1.5 group-hover:translate-y-[-3px] transition-transform duration-500 group-hover:holographic-text">
                     {event.title}
                 </h3>
                 <div className="flex items-center gap-1 text-sm text-white/60 mb-3">
@@ -156,7 +161,7 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
                                     e.stopPropagation();
                                     openBooking(event);
                                 }}
-                                className="text-sm font-semibold px-3.5 py-1.5 rounded-full text-white bg-white/10 backdrop-blur-sm border border-white/10 group-hover:bg-white group-hover:text-black transition-all duration-500"
+                                className="text-sm font-semibold px-4 py-2 rounded-full text-white bg-gradient-magic backdrop-blur-sm border border-white/20 hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-500"
                             >
                                 Book Now
                             </button>
