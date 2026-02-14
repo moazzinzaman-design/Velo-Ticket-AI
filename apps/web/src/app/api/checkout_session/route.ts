@@ -5,12 +5,13 @@ import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
     try {
-        const apiKey = process.env.STRIPE_SECRET_KEY;
+        let apiKey = process.env.STRIPE_SECRET_KEY || '';
+
+        // Aggressively sanitize the key: remove all whitespace, newlines, and quotes
+        apiKey = apiKey.replace(/\s/g, '').replace(/["']/g, '');
 
         console.log('--- DEBUG ENV ---');
-        console.log('STRIPE_SECRET_KEY type:', typeof apiKey);
-        console.log('STRIPE_SECRET_KEY length:', apiKey ? apiKey.length : 'N/A');
-        console.log('STRIPE_SECRET_KEY starts with:', apiKey ? apiKey.substring(0, 7) : 'N/A');
+        console.log('Sanitized API Key Length:', apiKey.length);
 
         if (!apiKey || apiKey.trim() === '') {
             throw new Error('STRIPE_SECRET_KEY is missing or empty');
