@@ -7,11 +7,13 @@ export async function POST(req: NextRequest) {
     try {
         let apiKey = process.env.STRIPE_SECRET_KEY || '';
 
-        // Aggressively sanitize the key: remove all whitespace, newlines, and quotes
-        apiKey = apiKey.replace(/\s/g, '').replace(/["']/g, '');
+        // STRICT sanitization: Only allow a-z, A-Z, 0-9, and underscore. 
+        // This removes ALL hidden characters, quotes, spaces, etc.
+        apiKey = apiKey.replace(/[^a-zA-Z0-9_]/g, '');
 
         console.log('--- DEBUG ENV ---');
         console.log('Sanitized API Key Length:', apiKey.length);
+        console.log('First 5 chars:', apiKey.substring(0, 5));
 
         if (!apiKey || apiKey.trim() === '') {
             throw new Error('STRIPE_SECRET_KEY is missing or empty');
