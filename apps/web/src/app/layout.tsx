@@ -29,6 +29,7 @@ import Footer from '../components/Footer';
 import WaitlistNotification from '../components/WaitlistNotification';
 
 import VeloAgentPanel from '../components/VeloAgentPanel';
+import ClientProviders from '../components/ClientProviders';
 
 export default function RootLayout({
     children,
@@ -40,16 +41,18 @@ export default function RootLayout({
             <body className={`${outfit.className} antialiased`}>
                 <QuestProvider>
                     <BookingProvider>
-                        <OnlineStatus />
-                        <Navbar />
-                        <VeloAgentPanel />
-                        <WaitlistNotification />
-                        <BookingOrchestrator />
-                        <CommandMenu />
-                        <main className="min-h-screen">
-                            {children}
-                        </main>
-                        <Footer />
+                        <ClientProviders>
+                            <OnlineStatus />
+                            <Navbar />
+                            <VeloAgentPanel />
+                            <WaitlistNotification />
+                            <BookingOrchestrator />
+                            <CommandMenu />
+                            <main className="min-h-screen">
+                                {children}
+                            </main>
+                            <Footer />
+                        </ClientProviders>
                     </BookingProvider>
                 </QuestProvider>
             </body>

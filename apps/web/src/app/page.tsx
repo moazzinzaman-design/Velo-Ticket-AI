@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles, Shield, Zap, Globe, Star, Calendar, MapPin, Clock
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ParticleCanvas from '../components/ParticleCanvas';
 import WaitlistButton from '../components/WaitlistButton';
+import MagneticButton from '../components/MagneticButton';
 import { veloBus } from '../lib/veloBus';
 
 /* ─── Featured Events Data ─── */
@@ -337,12 +338,12 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link href="/events" className="btn-primary flex items-center gap-2 text-base px-8 py-4">
+                            <MagneticButton href="/events" className="btn-primary flex items-center gap-2 text-base px-8 py-4" strength={0.3}>
                                 <Ticket size={18} /> Explore Events <ArrowRight size={18} />
-                            </Link>
-                            <Link href="/features" className="btn-outline flex items-center gap-2 text-base px-8 py-4">
+                            </MagneticButton>
+                            <MagneticButton href="/features" className="btn-outline flex items-center gap-2 text-base px-8 py-4" strength={0.25}>
                                 See How It Works
-                            </Link>
+                            </MagneticButton>
                         </div>
 
                         {/* Trust bar */}
@@ -465,7 +466,7 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {features.map((feature, i) => (
                             <Reveal key={feature.title} delay={i * 0.1}>
-                                <div className="glass-card-hover rounded-2xl p-8 cursor-default group holographic-card magnetic-hover">
+                                <div className="glass-card-hover rounded-2xl p-8 cursor-default group holographic-card magnetic-hover liquid-glass">
                                     <div className="flex items-start justify-between mb-5 relative z-10">
                                         <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-velo-violet/20 transition-all duration-500`}>
                                             <feature.icon className="w-7 h-7 text-white" />

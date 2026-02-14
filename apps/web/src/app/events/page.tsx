@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, Clock, Search, Ticket, Sparkles } from 'lucide-react';
 import { veloBus } from '../../lib/veloBus';
 import WaitlistButton from '../../components/WaitlistButton';
 import EventCard from '../../components/EventCard';
+import { useDynamicTheme, getCategoryFromString } from '../../hooks/useDynamicTheme';
 
 const categories = ['All', 'Concerts', 'Sports', 'Theatre', 'Comedy', 'Festivals', 'Exhibitions'];
 
@@ -132,14 +133,19 @@ const allEvents = [
     },
 ];
 
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'scale' }) {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: '-40px' });
+    const variants = {
+        up: { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } },
+        left: { hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0 } },
+        scale: { hidden: { opacity: 0, scale: 0.92 }, visible: { opacity: 1, scale: 1 } },
+    };
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            initial={variants[direction].hidden}
+            animate={isInView ? variants[direction].visible : variants[direction].hidden}
             transition={{ duration: 0.5, delay, ease: 'easeOut' }}
         >
             {children}
@@ -155,6 +161,16 @@ import RecommendedEvents from '../../components/RecommendedEvents';
 export default function EventsPage() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const { setCategory, theme } = useDynamicTheme();
+
+    // Sync theme with category filter
+    useEffect(() => {
+        if (activeCategory === 'All') {
+            setCategory('default');
+        } else {
+            setCategory(getCategoryFromString(activeCategory));
+        }
+    }, [activeCategory, setCategory]);
 
     // Time Travel Debug State
     const [daysShift, setDaysShift] = useState(0);
@@ -254,7 +270,12 @@ export default function EventsPage() {
             </div>
 
             {/* Events Grid */}
-            <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 relative">
+                {/* Themed ambient glow */}
+                <div
+                    className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[180px] pointer-events-none transition-all duration-700 opacity-30"
+                    style={{ background: theme.gradient }}
+                />
                 <AnimatePresence mode="wait">
                     {filteredEvents.length === 0 ? (
                         <motion.div
