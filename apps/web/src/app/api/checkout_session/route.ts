@@ -12,11 +12,19 @@ export async function POST(req: NextRequest) {
         apiKey = apiKey.replace(/[\s\x00-\x1F\x7F]/g, '');
 
         console.log('--- DEBUG ENV ---');
+        console.log('Raw Key Length:', process.env.STRIPE_SECRET_KEY?.length || 0);
         console.log('Sanitized API Key Length:', apiKey.length);
-        console.log('First 5 chars:', apiKey.substring(0, 5));
+        console.log('First 7 chars:', apiKey.substring(0, 7));
+        console.log('Last 7 chars:', apiKey.substring(apiKey.length - 7));
+        console.log('Key starts with sk_test:', apiKey.startsWith('sk_test_'));
+        console.log('Key starts with sk_live:', apiKey.startsWith('sk_live_'));
 
         if (!apiKey || apiKey.trim() === '') {
             throw new Error('STRIPE_SECRET_KEY is missing or empty');
+        }
+
+        if (!apiKey.startsWith('sk_test_') && !apiKey.startsWith('sk_live_')) {
+            throw new Error('STRIPE_SECRET_KEY has invalid format (must start with sk_test_ or sk_live_)');
         }
 
         const stripe = new Stripe(apiKey.trim(), {
