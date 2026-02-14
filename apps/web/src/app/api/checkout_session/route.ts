@@ -5,32 +5,19 @@ import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
     try {
-        let apiKey = process.env.STRIPE_SECRET_KEY || '';
+        const apiKey = process.env.STRIPE_SECRET_KEY;
 
-        // STRICT sanitization: Remove whitespace and non-printable control characters.
-        // We allow dashes, underscores, and alphanumeric characters.
-        apiKey = apiKey.replace(/[\s\x00-\x1F\x7F]/g, '');
-
-        console.log('--- DEBUG ENV ---');
-        console.log('Raw Key Length:', process.env.STRIPE_SECRET_KEY?.length || 0);
-        console.log('Sanitized API Key Length:', apiKey.length);
-        console.log('First 7 chars:', apiKey.substring(0, 7));
-        console.log('Last 7 chars:', apiKey.substring(apiKey.length - 7));
-        console.log('Key starts with sk_test:', apiKey.startsWith('sk_test_'));
-        console.log('Key starts with sk_live:', apiKey.startsWith('sk_live_'));
-
-        if (!apiKey || apiKey.trim() === '') {
-            throw new Error('STRIPE_SECRET_KEY is missing or empty');
+        if (!apiKey) {
+            console.error('STRIPE_SECRET_KEY is not set in environment variables');
+            throw new Error('Payment system configuration error');
         }
 
-        if (!apiKey.startsWith('sk_test_') && !apiKey.startsWith('sk_live_')) {
-            throw new Error('STRIPE_SECRET_KEY has invalid format (must start with sk_test_ or sk_live_)');
-        }
+        console.log('Stripe key configured:', apiKey.substring(0, 7) + '...');
 
-        const stripe = new Stripe(apiKey.trim(), {
+        const stripe = new Stripe(apiKey, {
             apiVersion: '2023-10-16',
-            maxNetworkRetries: 3, // Retry up to 3 times on network errors
-            timeout: 10000, // 10 second timeout
+            maxNetworkRetries: 3,
+            timeout: 10000,
         } as any);
 
         const { price, title, quantity = 1 } = await req.json();
