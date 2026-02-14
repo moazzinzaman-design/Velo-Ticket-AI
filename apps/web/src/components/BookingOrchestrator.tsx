@@ -36,8 +36,8 @@ export default function BookingOrchestrator() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                console.error('No checkout URL returned');
-                alert('Payment initialization failed. Please try again.');
+                console.error('No checkout URL returned', data);
+                alert(`Payment initialization failed: ${data.error || 'Unknown error'}`);
                 setIsProcessing(false);
             }
         } catch (error) {
