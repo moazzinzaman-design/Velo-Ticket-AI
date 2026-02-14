@@ -5,11 +5,18 @@ import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
     try {
-        if (!process.env.STRIPE_SECRET_KEY) {
-            throw new Error('STRIPE_SECRET_KEY is missing');
+        const apiKey = process.env.STRIPE_SECRET_KEY;
+
+        console.log('--- DEBUG ENV ---');
+        console.log('STRIPE_SECRET_KEY type:', typeof apiKey);
+        console.log('STRIPE_SECRET_KEY length:', apiKey ? apiKey.length : 'N/A');
+        console.log('STRIPE_SECRET_KEY starts with:', apiKey ? apiKey.substring(0, 7) : 'N/A');
+
+        if (!apiKey || apiKey.trim() === '') {
+            throw new Error('STRIPE_SECRET_KEY is missing or empty');
         }
 
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        const stripe = new Stripe(apiKey.trim(), {
             apiVersion: '2023-10-16',
         } as any);
 
