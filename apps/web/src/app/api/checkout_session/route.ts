@@ -70,6 +70,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ sessionId: session.id, url: session.url });
     } catch (err: any) {
         console.error('Stripe API Error:', err);
+        if (err instanceof Stripe.errors.StripeError) {
+            console.error('Stripe Error Type:', err.type);
+            console.error('Stripe Error Code:', err.code);
+            console.error('Stripe Error Param:', err.param);
+            console.error('Stripe Error Message:', err.message);
+        }
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }
