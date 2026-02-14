@@ -1,0 +1,16 @@
+{
+  "name": "@velo/agent",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "echo 'Skipping tsc build for Vercel'",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@types/node": "^20.10.0",
+    "stripe": "^20.3.1",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4"
+  }
+}

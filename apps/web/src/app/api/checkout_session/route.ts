@@ -1,0 +1,59 @@
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
+
+
+export async function POST(req: NextRequest) {
+    try {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+            apiVersion: '2023-10-16',
+        } as any);
+
+        const { price, title, quantity = 1 } = await req.json();
+
+        if (!price || !title) {
+            return NextResponse.json({ error: 'Missing price or title' }, { status: 400 });
+        }
+
+        // Determine origin safely
+        const origin = req.headers.get('origin') || req.headers.get('referer') || 'http://localhost:3000';
+
+        // Dynamic Fee Calculation (e.g., 10% Take Rate)
+        const applicationFee = Math.round(price * 100 * 0.10); // 10% in cents
+
+        console.log('--- STRIPE SESSION CREATE ---');
+        console.log('Origin:', origin);
+        console.log('Price:', price);
+        console.log('Title:', title);
+        console.log('Fee:', applicationFee);
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'gbp',
+                        product_data: {
+                            name: title,
+                            description: 'Official Velo Verified Ticket',
+                        },
+                        unit_amount: Math.round(price * 100), // Convert to cents
+                    },
+                    quantity,
+                },
+            ],
+            mode: 'payment',
+            success_url: `${origin}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/?payment=cancelled`,
+            metadata: {
+                velo_fee: applicationFee.toString(),
+            },
+        });
+
+        console.log('Session URL:', session.url);
+        return NextResponse.json({ sessionId: session.id, url: session.url });
+    } catch (err: any) {
+        console.error('Stripe API Error:', err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+}
