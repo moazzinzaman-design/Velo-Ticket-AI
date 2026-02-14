@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
     try {
         let apiKey = process.env.STRIPE_SECRET_KEY || '';
 
-        // STRICT sanitization: Only allow a-z, A-Z, 0-9, and underscore. 
-        // This removes ALL hidden characters, quotes, spaces, etc.
-        apiKey = apiKey.replace(/[^a-zA-Z0-9_]/g, '');
+        // STRICT sanitization: Remove whitespace and non-printable control characters.
+        // We allow dashes, underscores, and alphanumeric characters.
+        apiKey = apiKey.replace(/[\s\x00-\x1F\x7F]/g, '');
 
         console.log('--- DEBUG ENV ---');
         console.log('Sanitized API Key Length:', apiKey.length);
