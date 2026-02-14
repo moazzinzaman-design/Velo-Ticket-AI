@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@stripe/stripe-js": "^8.7.0",
+        "@supabase/supabase-js": "^2.95.3",
         "@velo/agent": "*",
         "framer-motion": "^10.0.0",
         "lucide-react": "^0.263.1",
