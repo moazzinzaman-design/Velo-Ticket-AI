@@ -2,12 +2,15 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createClient } from '../lib/supabase/client';
 
 interface UserProfile {
+    id?: string;
     name: string;
     email: string;
     avatar: string;
     memberSince: string;
+    stripeAccountId?: string;
 }
 
 interface Ticket {
@@ -25,51 +28,69 @@ interface UserState {
     profile: UserProfile;
     tickets: Ticket[];
     isVeloPlus: boolean;
+    isLoading: boolean;
     toggleVeloPlus: () => void;
     joinVeloPlus: () => void;
     cancelVeloPlus: () => void;
     updateProfile: (data: Partial<UserProfile>) => void;
     addTicket: (ticket: Ticket) => void;
+    checkSession: () => Promise<void>;
+    signOut: () => Promise<void>;
 }
 
 export const useUser = create<UserState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             profile: {
-                name: 'Alex Rivera',
-                email: 'alex.rivera@example.com',
-                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
-                memberSince: 'Oct 2024'
+                name: 'Guest User',
+                email: '',
+                avatar: '',
+                memberSince: ''
             },
-            tickets: [
-                {
-                    id: 'tkt_12345',
-                    eventId: 1,
-                    eventTitle: 'Coldplay: Music of the Spheres',
-                    eventDate: 'Fri, Oct 12 • 8:00 PM',
-                    eventVenue: 'Wembley Stadium',
-                    eventImage: 'https://images.unsplash.com/photo-1459749411177-718f43d57004?q=80&w=2670&auto=format&fit=crop',
-                    seat: 'Section 102, Row A, Seat 12'
-                },
-                {
-                    id: 'tkt_67890',
-                    eventId: 2,
-                    eventTitle: 'Daft Punk 2026',
-                    eventDate: 'Sat, Nov 15 • 9:00 PM',
-                    eventVenue: 'The Sphere',
-                    eventImage: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2670&auto=format&fit=crop',
-                    seat: 'General Admission'
-                }
-            ],
+            tickets: [], // Logic to fetch real tickets will be added in Phase 2
             isVeloPlus: false,
+            isLoading: true,
+
             toggleVeloPlus: () => set((state) => ({ isVeloPlus: !state.isVeloPlus })),
             joinVeloPlus: () => set({ isVeloPlus: true }),
             cancelVeloPlus: () => set({ isVeloPlus: false }),
             updateProfile: (data) => set((state) => ({ profile: { ...state.profile, ...data } })),
             addTicket: (ticket) => set((state) => ({ tickets: [...state.tickets, ticket] })),
+
+            checkSession: async () => {
+                const supabase = createClient();
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (session?.user) {
+                    set({
+                        profile: {
+                            id: session.user.id,
+                            name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Velo User',
+                            email: session.user.email || '',
+                            avatar: session.user.user_metadata.avatar_url || '',
+                            memberSince: new Date(session.user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                            stripeAccountId: session.user.user_metadata.stripe_account_id
+                        },
+                        isLoading: false
+                    });
+                } else {
+                    set({ isLoading: false });
+                }
+            },
+
+            signOut: async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                set({
+                    profile: { name: 'Guest User', email: '', avatar: '', memberSince: '' },
+                    tickets: [],
+                    isVeloPlus: false
+                });
+            }
         }),
         {
             name: 'velo-user-storage',
+            partialize: (state) => ({ isVeloPlus: state.isVeloPlus, tickets: state.tickets }), // Don't persist profile, fetch fresh from DB
         }
     )
 );

@@ -14,7 +14,6 @@ import { useQuest } from '../context/QuestContext';
 import { useBooking } from '../context/BookingContext';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { realEvents } from '../data/realEvents';
-import { getVenueByName, venues } from '../data/venueData';
 import { veloBus } from '../lib/veloBus';
 import stripePromise from '../lib/stripe';
 
@@ -330,9 +329,7 @@ export default function VeloAgentPanel() {
                 } else if (response.action === 'show_dining_options') {
                     // Call Service
                     // Mock finding venue near "The Sphere" or context
-                    // Mock finding venue near "The Sphere" or context
-                    const venueName = realEvents[0].venue;
-                    const venue = getVenueByName(venueName) || venues[0]; // Fallback to first venue if not found
+                    const venue = realEvents[0].location;
                     const restaurants = findRestaurants(venue, response.cuisine);
 
                     setMessages(prev => [...prev, {

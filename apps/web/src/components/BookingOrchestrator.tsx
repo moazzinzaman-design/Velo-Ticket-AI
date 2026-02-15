@@ -14,6 +14,16 @@ export default function BookingOrchestrator() {
     // In a real app, we would fetch the venue layout based on selectedEvent.venue
     // For this prototype, we'll use the default mock venue.
     const venue = venues[0];
+    const [dynamicPrice, setDynamicPrice] = React.useState<number | null>(null);
+
+    React.useEffect(() => {
+        if (selectedEvent) {
+            fetch(`/api/events/${selectedEvent.id}/price`)
+                .then(res => res.json())
+                .then(data => setDynamicPrice(data.price))
+                .catch(err => console.error('Failed to fetch price:', err));
+        }
+    }, [selectedEvent]);
 
     const handleCheckout = async (seatIds: string[], total: number) => {
         if (!selectedEvent) return;
@@ -61,7 +71,7 @@ export default function BookingOrchestrator() {
                 <SeatSelector
                     venue={venue}
                     eventTitle={selectedEvent.title}
-                    basePrice={selectedEvent.price}
+                    basePrice={dynamicPrice || selectedEvent.price}
                     onClose={closeBooking}
                     onConfirm={handleCheckout}
                 />

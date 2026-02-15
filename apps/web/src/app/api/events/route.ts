@@ -1,11 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eventAggregator } from '../../../lib/eventProviders';
-import { supabase } from '../../../lib/supabase/client';
+import { createClient } from '../../../lib/supabase/server';
+import { scanContent } from '../../../lib/moderation/scanner';
 import type { RealEvent } from '../../../data/realEvents';
 
 const CACHE_DURATION_MINUTES = 15;
 
+export async function POST(req: NextRequest) {
+    const supabase = await createClient();
+    try {
+        const body = await req.json();
+        const { title, description, date, venue, city } = body;
+
+        // 1. Content Moderation
+        const { flagged, reason } = await scanContent(`${title} ${description}`);
+        if (flagged) {
+            return NextResponse.json({
+                error: 'Content violation detected.',
+                reason
+            }, { status: 400 });
+        }
+
+        // 2. Save to Supabase
+        const { data, error } = await supabase.from('events').insert({
+            title,
+            description,
+            date,
+            venue,
+            city,
+            source: 'user_generated',
+        }).select().single();
+
+        if (error) throw error;
+
+        return NextResponse.json({ event: data });
+
+    } catch (error: any) {
+        console.error('Create Event Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
 export async function GET(req: NextRequest) {
+    const supabase = await createClient();
     try {
         const { searchParams } = new URL(req.url);
         const city = searchParams.get('city') || 'London';
@@ -16,7 +53,7 @@ export async function GET(req: NextRequest) {
         const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 50;
 
         // Check cache first
-        const cachedEvents = await getCachedEvents(city, category);
+        const cachedEvents = await getCachedEvents(supabase, city, category);
         if (cachedEvents) {
             console.log(`Cache hit for ${city}/${category || 'all'}`);
             return NextResponse.json({
@@ -38,7 +75,7 @@ export async function GET(req: NextRequest) {
         });
 
         // Store in cache
-        await cacheEvents(city, category, events);
+        await cacheEvents(supabase, city, category, events);
 
         return NextResponse.json({
             events,
@@ -60,13 +97,13 @@ export async function GET(req: NextRequest) {
 }
 
 async function getCachedEvents(
+    supabase: any,
     city: string,
     category: string | undefined
 ): Promise<RealEvent[] | null> {
-    if (!supabase) return null; // Database not configured
+    if (!supabase) return null;
 
     try {
-        // Check if cache is fresh
         const { data: metadata } = await supabase
             .from('event_cache_metadata')
             .select('last_synced, event_count')
@@ -81,7 +118,6 @@ async function getCachedEvents(
 
         if (isStale) return null;
 
-        // Fetch cached events
         const query = supabase
             .from('events')
             .select('*')
@@ -103,14 +139,14 @@ async function getCachedEvents(
 }
 
 async function cacheEvents(
+    supabase: any,
     city: string,
     category: string | undefined,
     events: RealEvent[]
 ): Promise<void> {
-    if (!supabase) return; // Database not configured
+    if (!supabase) return;
 
     try {
-        // Insert/update events
         const dbEvents = events.map(e => ({
             external_id: `${e.id}`,
             source: 'aggregated' as const,
@@ -135,7 +171,6 @@ async function cacheEvents(
             onConflict: 'external_id,source',
         });
 
-        // Update cache metadata
         await supabase.from('event_cache_metadata').upsert({
             city,
             category: category || '',
@@ -147,7 +182,6 @@ async function cacheEvents(
         });
     } catch (error) {
         console.error('Cache write error:', error);
-        // Non-critical error — continue without caching
     }
 }
 

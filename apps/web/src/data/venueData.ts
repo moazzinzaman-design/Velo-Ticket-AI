@@ -38,6 +38,8 @@ function generateSeatsInGrid(
 const theSphereLayout: Venue = {
     id: 1,
     name: 'The Sphere, London',
+    address: 'Olympic Park, London E20 2ST',
+    coordinates: { lat: 51.543, lng: -0.005 },
     layout: {
         width: 800,
         height: 600,
@@ -126,6 +128,8 @@ const theSphereLayout: Venue = {
 const wembleyLayout: Venue = {
     id: 2,
     name: 'Wembley Stadium',
+    address: 'Wembley, London HA9 0WS',
+    coordinates: { lat: 51.556, lng: -0.280 },
     layout: {
         width: 900,
         height: 700,

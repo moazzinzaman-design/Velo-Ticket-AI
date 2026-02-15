@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Outfit } from 'next/font/google'
@@ -36,6 +37,11 @@ import ClientProviders from '../components/ClientProviders';
 import PaymentSuccessHandler from '../components/PaymentSuccessHandler';
 import CookieConsent from '../components/legal/CookieConsent';
 
+import PostHogProvider from '../components/analytics/PostHogProvider';
+import SupportWidget from '../components/SupportWidget';
+
+
+
 export default function RootLayout({
     children,
 }: {
@@ -47,26 +53,31 @@ export default function RootLayout({
                 <link href='https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css' rel='stylesheet' />
             </head>
             <body className={`${outfit.className} antialiased`}>
-                <QuestProvider>
-                    <BookingProvider>
-                        <ClientProviders>
-                            <ParticleBackground />
-                            <AuroraBackground />
-                            <OnlineStatus />
-                            <Navbar />
-                            <VeloAgentPanel />
-                            <WaitlistNotification />
-                            <BookingOrchestrator />
-                            <PaymentSuccessHandler />
-                            <CookieConsent />
-                            <CommandMenu />
-                            <main className="min-h-screen">
-                                {children}
-                            </main>
-                            <Footer />
-                        </ClientProviders>
-                    </BookingProvider>
-                </QuestProvider>
+                <PostHogProvider>
+                    <QuestProvider>
+                        <BookingProvider>
+                            <ClientProviders>
+                                <SupportWidget />
+                                <ParticleBackground />
+                                <AuroraBackground />
+                                <OnlineStatus />
+                                <Navbar />
+                                <VeloAgentPanel />
+                                <WaitlistNotification />
+                                <BookingOrchestrator />
+                                <Suspense fallback={null}>
+                                    <PaymentSuccessHandler />
+                                </Suspense>
+                                <CookieConsent />
+                                <CommandMenu />
+                                <main className="min-h-screen">
+                                    {children}
+                                </main>
+                                <Footer />
+                            </ClientProviders>
+                        </BookingProvider>
+                    </QuestProvider>
+                </PostHogProvider>
             </body>
         </html>
     )

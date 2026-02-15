@@ -31,5 +31,7 @@ export interface VenueLayout {
 export interface Venue {
     id: number;
     name: string;
+    address: string;
+    coordinates: { lat: number; lng: number };
     layout: VenueLayout;
 }

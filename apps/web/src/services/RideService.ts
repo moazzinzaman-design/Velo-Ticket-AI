@@ -1,4 +1,4 @@
-import { Venue } from "../data/venueData";
+import { EventLocation } from '../types/location';
 
 export interface RideOption {
     provider: 'Uber' | 'Lyft' | 'Velo Black';
@@ -9,7 +9,7 @@ export interface RideOption {
     deepLink: string;
 }
 
-export const getRideEstimates = (fromLat: number, fromLng: number, venue: Venue): RideOption[] => {
+export const getRideEstimates = (fromLat: number, fromLng: number, venue: EventLocation): RideOption[] => {
     // Simulate API latency
     // In a real app, this would call Uber/Lyft APIs
 
@@ -27,7 +27,7 @@ export const getRideEstimates = (fromLat: number, fromLng: number, venue: Venue)
             price: Math.round((basePrice + 5) * surge),
             eta: Math.floor(Math.random() * 5) + 2,
             currency: 'GBP',
-            deepLink: `https://m.uber.com/ul/?action=setPickup&client_id=velo&pickup=my_location&dropoff[latitude]=${venue.coordinates.lat}&dropoff[longitude]=${venue.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(venue.name)}`
+            deepLink: `https://m.uber.com/ul/?action=setPickup&client_id=velo&pickup=my_location&dropoff[latitude]=${venue.coordinates.lat}&dropoff[longitude]=${venue.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(venue.address)}`
         },
         {
             provider: 'Lyft',

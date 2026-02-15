@@ -1,4 +1,4 @@
-import { Venue } from "../types/venue";
+import { EventLocation } from '../types/location';
 
 export interface Restaurant {
     id: string;
@@ -60,7 +60,7 @@ const RESTAURANTS: Omit<Restaurant, 'distance'>[] = [
     }
 ];
 
-export const findRestaurants = (nearVenue: Venue, cuisine?: string): Restaurant[] => {
+export const findRestaurants = (nearVenue: EventLocation, cuisine?: string): Restaurant[] => {
     // In a real app, we would query Google Places or OpenTable API with venue coordinates
 
     let filtered = RESTAURANTS;

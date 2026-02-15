@@ -1,32 +1,29 @@
-'use client';
+import { resend } from './client';
+import { BookingConfirmation } from '../../emails/BookingConfirmation';
 
-/**
- * Service for handling transactional emails. 
- * Currently mocked for demonstration, but ready for integration with Resend, SendGrid, or Postmark.
- */
-export class EmailService {
-    /**
-     * Sends a booking confirmation email to the user.
-     */
-    static async sendBookingConfirmation(email: string, eventTitle: string, bookingRef: string) {
-        console.log(`[EmailService] Sending confirmation to: ${email}`);
-        console.log(`[EmailService] Event: ${eventTitle}`);
-        console.log(`[EmailService] Ref: ${bookingRef}`);
+export const EmailService = {
+    async sendBookingConfirmation(to: string, eventName: string, ticketId: string) {
+        if (!process.env.RESEND_API_KEY) {
+            console.log(`[Mock Email] To: ${to}, Event: ${eventName}, Ticket: ${ticketId}`);
+            return;
+        }
 
-        // Simulate network latency
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log(`[EmailService] Email sent successfully to ${email}`);
-                resolve(true);
-            }, 800);
-        });
-    }
-
-    /**
-     * Sends a waitlist notification.
-     */
-    static async sendWaitlistJoinConfirmation(email: string, eventTitle: string) {
-        console.log(`[EmailService] Waitlist confirmation for ${eventTitle} sent to ${email}`);
-        return Promise.resolve(true);
-    }
-}
+        try {
+            await resend.emails.send({
+                from: 'onboarding@resend.dev', // Use default testing domain
+                to,
+                subject: `Your mobile ticket for ${eventName}`,
+                react: BookingConfirmation({
+                    userName: 'Velo User',
+                    eventName,
+                    ticketId,
+                    date: 'Date TBD',
+                    ticketLink: `https://velo.app/tickets/${ticketId}`
+                }),
+            });
+            console.log(`Email sent to ${to}`);
+        } catch (error) {
+            console.error('Failed to send email:', error);
+        }
+    },
+};
