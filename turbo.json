@@ -13,11 +13,9 @@
         "STRIPE_WEBHOOK_SECRET",
         "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY",
         "NEXT_PUBLIC_POSTHOG_KEY",
-        "STRIPE_WEBHOOK_SECRET",
-        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-        "NEXT_PUBLIC_POSTHOG_KEY",
         "NEXT_PUBLIC_POSTHOG_HOST",
-        "OPENAI_API_KEY"
+        "OPENAI_API_KEY",
+        "VERCEL_GIT_COMMIT_SHA"
     ],
     "tasks": {
         "build": {
