@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Zap, Crown, Building2, Sparkles, ArrowRight, Shield, Users, Globe, TicketCheck } from 'lucide-react';
+import { Check, Zap, Crown, Building2, Sparkles, ArrowRight, Shield, Users, Globe, Ticket } from 'lucide-react';
 import Link from 'next/link';
 
 const PLANS = [
@@ -91,7 +91,7 @@ const PLANS = [
 ];
 
 const TRUST_STATS = [
-    { label: 'Events Powered', value: '12,400+', icon: TicketCheck },
+    { label: 'Events Powered', value: '12,400+', icon: Ticket },
     { label: 'Happy Customers', value: '2.1M+', icon: Users },
     { label: 'Countries', value: '34', icon: Globe },
     { label: 'Uptime', value: '99.97%', icon: Shield },
