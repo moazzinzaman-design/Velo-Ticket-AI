@@ -22,6 +22,12 @@ export interface RealEvent {
     description?: string;
     hasMerch?: boolean;
     merchItems?: string[];
+    resaleTickets?: {
+        id: string;
+        section: string;
+        row: string;
+        price: number;
+    }[];
     ageRestriction?: 'All Ages' | '18+' | '16+' | '14+';
 }
 
@@ -47,6 +53,10 @@ export const realEvents: RealEvent[] = [
         description: 'The legendary duo returns for a one-night-only holographic spectacle at The Sphere.',
         hasMerch: true,
         merchItems: ['Helmet Replica', 'Limited Edition Vinyl'],
+        resaleTickets: [
+            { id: 'resale-1', section: 'B', row: '12', price: 140 }, // Just below cap
+            { id: 'resale-2', section: 'A', row: '4', price: 155 }
+        ],
         ageRestriction: 'All Ages'
     },
     {

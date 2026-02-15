@@ -4,7 +4,7 @@ import { useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { MapPin, Calendar, Clock, Lock, ShoppingBag } from 'lucide-react';
+import { MapPin, Calendar, Clock, Lock, ShoppingBag, Ticket } from 'lucide-react';
 import { veloBus } from '../lib/veloBus';
 import WaitlistButton from './WaitlistButton';
 import { useDynamicPricing } from '../hooks/useDynamicPricing';
@@ -25,6 +25,7 @@ interface Event {
     soldPercentage: number;
     hasMerch?: boolean;
     merchItems?: string[];
+    resaleTickets?: any[];
     ageRestriction?: string;
 }
 
@@ -123,7 +124,8 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
                     {/* Merch Badge - independent from main tag */}
-                    {(event.hasMerch || event.ageRestriction) && (
+                    {/* Merch & Resale Badges */}
+                    {(event.hasMerch || event.ageRestriction || (event.resaleTickets && event.resaleTickets.length > 0)) && (
                         <div className="mb-3 flex flex-wrap gap-2">
                             {event.hasMerch && (
                                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 backdrop-blur-sm text-[10px] font-bold text-pink-300 uppercase tracking-wider">
@@ -134,6 +136,12 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
                                             {event.merchItems.length}
                                         </span>
                                     )}
+                                </div>
+                            )}
+                            {(event.resaleTickets && event.resaleTickets.length > 0) && (
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 backdrop-blur-sm text-[10px] font-bold text-blue-300 uppercase tracking-wider">
+                                    <Ticket size={11} />
+                                    <span>Resale Available</span>
                                 </div>
                             )}
                             {event.ageRestriction && (

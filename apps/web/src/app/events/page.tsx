@@ -14,7 +14,7 @@ import { RealEvent } from '../../data/realEvents';
 import MapView from '../../components/MapView';
 import { LayoutGrid, Map as MapIcon } from 'lucide-react';
 
-const categories = ['All', 'Concerts', 'Sports', 'Theatre', 'Comedy', 'Festivals', 'Exhibitions'];
+const categories = ['All', 'Verified Resale', 'Concerts', 'Sports', 'Theatre', 'Comedy', 'Festivals', 'Exhibitions'];
 
 const tagColors: Record<string, string> = {
     'TONIGHT': 'bg-velo-rose',
@@ -84,7 +84,9 @@ export default function EventsPage() {
         // Filter locally based on category and search
         let filtered = [...allEvents];
 
-        if (activeCategory !== 'All') {
+        if (activeCategory === 'Verified Resale') {
+            filtered = filtered.filter(e => e.resaleTickets && e.resaleTickets.length > 0);
+        } else if (activeCategory !== 'All') {
             filtered = filtered.filter(e => e.category === getCategoryFromString(activeCategory));
         }
 

@@ -42,7 +42,7 @@ export default function BookingOrchestrator() {
         setIsProcessing(true);
 
         // Use real user email from auth, fall back to empty string
-        const userEmail = profile.email || '';
+        const userEmail = profile?.email || '';
 
         // Send booking confirmation email to the actual user
         if (userEmail) {
@@ -65,7 +65,7 @@ export default function BookingOrchestrator() {
                     quantity: seatIds.length,
                     addOns,
                     customerEmail: userEmail, // Pre-fill Stripe checkout email
-                    userId: profile.id, // Pass user ID for webhook fulfillment
+                    userId: profile?.id, // Pass user ID for webhook fulfillment
                 }),
             });
 
