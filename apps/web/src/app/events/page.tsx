@@ -72,7 +72,7 @@ export default function EventsPage() {
     // Events fetching state
     const [events, setEvents] = useState<RealEvent[]>([]);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
-    const [eventsSource, setEventsSource] = useState<'cache' | 'live' | 'fallback'>('fallback');
+    const [eventsSource, setEventsSource] = useState<'cache' | 'live' | 'fallback' | 'local'>('fallback');
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
     // Use local data directly for consistency
