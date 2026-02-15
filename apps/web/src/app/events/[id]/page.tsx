@@ -123,27 +123,41 @@ export default function EventDetailsPage() {
                             {event.title}
                         </h1>
 
-                        <div className="flex flex-wrap gap-8 text-white/90 font-medium text-lg">
-                            <div className="flex items-center gap-2">
-                                <Calendar className="text-velo-cyan" size={24} />
-                                <span>{event.date}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Clock className="text-velo-cyan" size={24} />
-                                <span>{event.time}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <MapPin className="text-velo-cyan" size={24} />
-                                <span>{event.venue}</span>
-                            </div>
-                            {event.ageRestriction && (
+                        <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
+                            <div className="flex flex-wrap gap-8 text-white/90 font-medium text-lg">
                                 <div className="flex items-center gap-2">
-                                    <Shield className={event.ageRestriction === '18+' ? 'text-velo-rose' : 'text-velo-emerald'} size={24} />
-                                    <span className={event.ageRestriction === '18+' ? 'text-velo-rose font-bold' : 'text-white'}>
-                                        {event.ageRestriction === '18+' ? '18+ Event' : `Entry: ${event.ageRestriction}`}
-                                    </span>
+                                    <Calendar className="text-velo-cyan" size={24} />
+                                    <span>{event.date}</span>
                                 </div>
-                            )}
+                                <div className="flex items-center gap-2">
+                                    <Clock className="text-velo-cyan" size={24} />
+                                    <span>{event.time}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <MapPin className="text-velo-cyan" size={24} />
+                                    <span>{event.venue}</span>
+                                </div>
+                                {event.ageRestriction && (
+                                    <div className="flex items-center gap-2">
+                                        <Shield className={event.ageRestriction === '18+' ? 'text-velo-rose' : 'text-velo-emerald'} size={24} />
+                                        <span className={event.ageRestriction === '18+' ? 'text-velo-rose font-bold' : 'text-white'}>
+                                            {event.ageRestriction === '18+' ? '18+ Event' : `Entry: ${event.ageRestriction}`}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    import('../../../lib/veloBus').then(({ veloBus }) => {
+                                        veloBus.emit('open-agent', { message: `Tell me more about the ${event.title} event at ${event.venue}.` });
+                                    });
+                                }}
+                                className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group"
+                            >
+                                <Sparkles size={18} className="text-velo-cyan group-hover:rotate-12 transition-transform" />
+                                Ask Concierge
+                            </button>
                         </div>
                     </motion.div>
                 </div>
