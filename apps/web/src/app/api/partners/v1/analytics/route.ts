@@ -14,18 +14,18 @@ export async function GET(request: Request) {
     // Mock data simulation - normally this would query a real database
     // using the eventId to get aggregate stats
     const analyticsData = {
-        eventId: eventId,
-        ticketsSold: 12500,
+        event_id: eventId,
+        tickets_sold: 12500,
         capacity: 15000,
         revenue: 1875000, // $1.8M
         currency: 'USD',
-        attendanceRate: 0.85, // 85% currently scanned in if event is live
-        scansLastHour: 342,
+        attendance_rate: 0.85, // 85% currently scanned in if event is live
+        scans_last_hour: 342,
         demographics: {
             labels: ['18-24', '25-34', '35-44', '45+'],
             values: [40, 35, 15, 10]
         },
-        updatedAt: new Date().toISOString()
+        updated_at: new Date().toISOString()
     };
 
     return NextResponse.json(analyticsData);

@@ -5,39 +5,39 @@ import { Ticket } from '@/types/ticket';
 const MOCK_TICKETS: Ticket[] = [
     {
         id: 't-123',
-        eventId: 'e-1',
-        eventName: 'Neon Dreams Festival',
-        venueName: 'Cyber Arena',
-        eventDate: '2024-11-15',
-        eventTime: '20:00',
-        seat: 'General Admission',
+        event_id: 'e-1',
+        event_title: 'Neon Dreams Festival',
+        venue_name: 'Cyber Arena',
+        event_date: '2024-11-15',
+        event_time: '20:00',
+        seat_info: 'General Admission',
         section: 'GA',
         row: '',
-        seatNumber: '',
+        seat_number: '',
         price: 150,
-        qrPayload: 'valid-qr-payload-123',
+        qr_code: 'valid-qr-payload-123',
         status: 'active',
-        ownerName: 'Alice Johnson',
-        purchaseDate: '2024-10-01',
-        authenticityHash: '0xabc123...',
+        owner_name: 'Alice Johnson',
+        purchase_date: '2024-10-01',
+        authenticity_hash: '0xabc123...',
     },
     {
         id: 't-456',
-        eventId: 'e-1',
-        eventName: 'Neon Dreams Festival',
-        venueName: 'Cyber Arena',
-        eventDate: '2024-11-15',
-        eventTime: '20:00',
-        seat: 'VIP',
+        event_id: 'e-1',
+        event_title: 'Neon Dreams Festival',
+        venue_name: 'Cyber Arena',
+        event_date: '2024-11-15',
+        event_time: '20:00',
+        seat_info: 'VIP',
         section: 'VIP',
         row: 'A',
-        seatNumber: '1',
+        seat_number: '1',
         price: 300,
-        qrPayload: 'valid-qr-payload-456',
+        qr_code: 'valid-qr-payload-456',
         status: 'used',
-        ownerName: 'Bob Smith',
-        purchaseDate: '2024-10-02',
-        authenticityHash: '0xdef456...',
+        owner_name: 'Bob Smith',
+        purchase_date: '2024-10-02',
+        authenticity_hash: '0xdef456...',
     }
 ];
 
@@ -69,18 +69,18 @@ export async function POST(request: Request) {
             valid: true,
             ticket: {
                 id: ticket.id,
-                eventName: ticket.eventName,
-                seat: ticket.seat,
-                ownerName: ticket.ownerName,
+                event_title: ticket.event_title,
+                seat_info: ticket.seat_info,
+                owner_name: ticket.owner_name,
                 status: ticket.status
             },
             passenger: {
                 id: 'u-789', // Mock user id
-                name: ticket.ownerName,
-                isVerified: true
+                name: ticket.owner_name,
+                is_verified: true
             },
-            scanTime: new Date().toISOString(),
-            gateId: gateId || 'GATE-A'
+            scan_time: new Date().toISOString(),
+            gate_id: gateId || 'GATE-A'
         });
 
     } catch (error) {
