@@ -1,4 +1,4 @@
-import { Venue } from "../data/venueData";
+import { Venue } from "../types/venue";
 
 export interface Restaurant {
     id: string;
