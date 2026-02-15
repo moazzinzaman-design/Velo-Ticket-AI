@@ -12,9 +12,15 @@ import NodeTreeMode from './NodeTreeMode';
 
 import { useQuest } from '../context/QuestContext';
 import { useBooking } from '../context/BookingContext';
+import { useGeolocation } from '../hooks/useGeolocation';
 import { realEvents } from '../data/realEvents';
 import { veloBus } from '../lib/veloBus';
 import stripePromise from '../lib/stripe';
+
+import { getRideEstimates } from '../services/RideService';
+import { findRestaurants } from '../services/DiningService';
+import RideOptionsCard from './chat/RideOptionsCard';
+import RestaurantCarousel from './chat/RestaurantCarousel';
 
 import BiometricGate from './BiometricGate';
 import IdentityVault from './IdentityVault';
@@ -115,6 +121,12 @@ export default function VeloAgentPanel() {
 
     const { completeQuest } = useQuest();
     const { openBooking } = useBooking();
+    const { latitude, longitude, requestLocation, hasLocation } = useGeolocation();
+
+    // Auto-request location on mount for context
+    useEffect(() => {
+        requestLocation();
+    }, []);
 
     const handleProtectedAction = (action: string, data: any) => {
         setPendingAction({ action, data });
@@ -268,12 +280,72 @@ export default function VeloAgentPanel() {
         }
 
         try {
-            // Real agent processing
-            const response = await agent.processIntent(text);
+            // Real agent processing with Context
+            const context = {
+                events: realEvents,
+                location: hasLocation ? { lat: latitude, lng: longitude } : undefined,
+                time: new Date().toISOString()
+            };
+
+            const response = await agent.processIntent(text, context);
             setIsTyping(false);
 
             if (response.status === 'success') {
-                if (response.action === 'ticket_purchased') {
+                if (response.action === 'search_results') {
+                    setMessages(prev => [...prev, {
+                        role: 'agent',
+                        text: `I found ${response.results.length} events matching "${response.query || 'your search'}".`,
+                        component: (
+                            <div className="flex flex-col gap-2 mt-2">
+                                {response.results.map((event: any, i: number) => (
+                                    <div
+                                        key={i}
+                                        onClick={() => openBooking(event)}
+                                        className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group"
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <h4 className="font-bold text-white text-sm group-hover:text-velo-cyan transition-colors">{event.title}</h4>
+                                            <span className="text-xs text-white/50">{event.date}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center mt-1">
+                                            <span className="text-xs text-white/40">{event.location.venue}</span>
+                                            <span className="text-xs font-bold text-velo-violet">From £{event.price.min}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    }]);
+                } else if (response.action === 'show_ride_options') {
+                    // Call Service
+                    const venue = realEvents.find(e => e.location.venue.includes(response.destination)) || realEvents[0];
+                    const estimates = getRideEstimates(latitude || 51.5074, longitude || -0.1278, venue.location); // Default to London if no loc
+
+                    setMessages(prev => [...prev, {
+                        role: 'agent',
+                        text: `Here are the best ride options to ${response.destination}.`,
+                        component: <RideOptionsCard options={estimates} destination={response.destination} />
+                    }]);
+                } else if (response.action === 'show_dining_options') {
+                    // Call Service
+                    // Mock finding venue near "The Sphere" or context
+                    const venue = realEvents[0].location;
+                    const restaurants = findRestaurants(venue, response.cuisine);
+
+                    setMessages(prev => [...prev, {
+                        role: 'agent',
+                        text: `I found these great spots for ${response.cuisine || 'dinner'} near the venue.`,
+                        component: <RestaurantCarousel
+                            restaurants={restaurants}
+                            onReserve={(r) => {
+                                setMessages(p => [...p, {
+                                    role: 'agent',
+                                    text: `Reservation confirmed at ${r.name} for 2 people. I've added it to your itinerary.`
+                                }]);
+                            }}
+                        />
+                    }]);
+                } else if (response.action === 'ticket_purchased') {
                     // Update to show price ticker if in surge
                     if (isSurgeMode) {
                         const dynamicFee = 4.50; // Simulated dynamic fee (e.g. 5% of ticket price)

@@ -7,6 +7,13 @@ export const RideRequestSchema = z.object({
     provider: z.enum(['UBER', 'LYFT', 'WAYMO']).optional().default('UBER'),
 });
 
+export const SearchEventsSchema = z.object({
+    type: z.literal('SEARCH_EVENTS'),
+    query: z.string().optional(),
+    date: z.string().optional(),
+    location: z.string().optional(),
+});
+
 export const TicketPurchaseSchema = z.object({
     type: z.literal('TICKET_PURCHASE'),
     event: z.string(),
@@ -43,6 +50,8 @@ export const UnknownIntentSchema = z.object({
 
 export const UserIntentSchema = z.discriminatedUnion('type', [
     RideRequestSchema,
+    SearchEventsSchema,
+    TicketPurchaseSchema,
     TicketPurchaseSchema,
     DiningReservationSchema,
     UnknownIntentSchema,

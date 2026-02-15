@@ -22,6 +22,8 @@ export class VeloAgent {
         return this.handleTicketPurchase(intent);
       case 'DINING_RESERVATION':
         return this.handleDinnerReservation(intent);
+      case 'SEARCH_EVENTS':
+        return this.handleSearchEvents(intent, context);
       case 'CHURN_INTERVENTION':
         return this.handleChurnIntervention(intent);
       case 'SECURITY_UPGRADE':
@@ -68,38 +70,50 @@ export class VeloAgent {
     };
   }
 
+  private async handleSearchEvents(intent: any, context: any) {
+    const events = context.events || [];
+    let results = events;
+
+    // Filter by Location
+    if (intent.location) {
+      results = results.filter((e: any) =>
+        e.location.city.toLowerCase().includes(intent.location.toLowerCase()) ||
+        e.location.venue.toLowerCase().includes(intent.location.toLowerCase())
+      );
+    }
+
+    // Filter by Query (Artist/Title)
+    if (intent.query) {
+      const q = intent.query.toLowerCase();
+      results = results.filter((e: any) =>
+        e.title.toLowerCase().includes(q) ||
+        e.category.toLowerCase().includes(q)
+      );
+    }
+
+    return {
+      status: 'success',
+      action: 'search_results',
+      results: results.slice(0, 3), // Top 3
+      query: intent.query,
+      location: intent.location
+    };
+  }
+
   private async handleRideBooking(intent: any) {
     return {
       status: 'success',
-      action: 'ride_booked',
-      provider: intent.provider,
-      eta: '4 mins',
-      vehicle: 'Tesla Model Y',
-      cost: '$24.50',
-      destination: intent.destination
+      action: 'show_ride_options',
+      destination: intent.destination || 'The Sphere, London'
     };
   }
 
   private async handleDinnerReservation(intent: any) {
-    const restaurants: Record<string, string> = {
-      'italian': 'Luigi\'s Glass Trattoria',
-      'japanese': 'Sakura Floating Sushi',
-      'mexican': 'Casa de Cristal',
-      'steak': 'Prime Cut 3D',
-      'default': 'The Glass Bistro'
-    };
-
-    const name = restaurants[intent.cuisine as string] || restaurants['default'];
-
     return {
       status: 'success',
-      action: 'dinner_reserved',
-      restaurant: name,
-      cuisine: intent.cuisine || 'Modern European',
-      time: intent.time,
-      partySize: intent.partySize,
-      rating: 4.8,
-      priceRange: '$$$'
+      action: 'show_dining_options',
+      cuisine: intent.cuisine,
+      venue: 'The Sphere, London' // In real app, derived from context or current event
     };
   }
 

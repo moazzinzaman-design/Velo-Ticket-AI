@@ -53,6 +53,22 @@ export class IntentEngine {
             };
         }
 
+        // Search / Discovery Logic (New Phase B)
+        if (lowerQuery.includes('search') || lowerQuery.includes('find') || lowerQuery.includes('what') || lowerQuery.includes('show') || lowerQuery.includes('concert') || lowerQuery.includes('event')) {
+            // Distinguish from "Ride" or "Dinner" if they are the primary noun
+            if (!lowerQuery.includes('ride') && !lowerQuery.includes('uber') && !lowerQuery.includes('dinner') && !lowerQuery.includes('eat')) {
+                return {
+                    type: 'SEARCH_EVENTS',
+                    query: this.extractSearchQuery(lowerQuery),
+                    location: this.extractLocation(lowerQuery),
+                    date: this.extractTime(lowerQuery)
+                };
+            }
+        }
+
+
+
+
         // Pitch / Investor Demo
         if (lowerQuery.includes('pitch') || lowerQuery.includes('investor') || lowerQuery.includes('demo') || lowerQuery.includes('presentation') || lowerQuery.includes('million')) {
             return {
@@ -93,5 +109,20 @@ export class IntentEngine {
             return parseInt(match[1] || match[2]);
         }
         return undefined;
+    }
+
+    private extractSearchQuery(query: string): string | undefined {
+        // Simple extraction: remove common stop words
+        const stopWords = ['find', 'search', 'show', 'me', 'tickets', 'for', 'events', 'concerts'];
+        let clean = query;
+        stopWords.forEach(word => {
+            clean = clean.replace(new RegExp(`\\b${word}\\b`, 'gi'), '');
+        });
+        return clean.trim() || undefined;
+    }
+
+    private extractLocation(query: string): string | undefined {
+        const locations = ['london', 'manchester', 'birmingham', 'leeds', 'new york', 'los angeles'];
+        return locations.find(l => query.includes(l));
     }
 }
