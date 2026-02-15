@@ -7,7 +7,13 @@
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "RESEND_API_KEY",
-        "SKIDDLE_API_KEY"
+        "SKIDDLE_API_KEY",
+        "TICKETMASTER_API_KEY",
+        "SEATGEEK_CLIENT_ID",
+        "STRIPE_WEBHOOK_SECRET",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_POSTHOG_KEY",
+        "NEXT_PUBLIC_POSTHOG_HOST"
     ],
     "tasks": {
         "build": {
@@ -21,7 +27,13 @@
                 "NEXT_PUBLIC_SUPABASE_URL",
                 "NEXT_PUBLIC_SUPABASE_ANON_KEY",
                 "RESEND_API_KEY",
-                "SKIDDLE_API_KEY"
+                "SKIDDLE_API_KEY",
+                "TICKETMASTER_API_KEY",
+                "SEATGEEK_CLIENT_ID",
+                "STRIPE_WEBHOOK_SECRET",
+                "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+                "NEXT_PUBLIC_POSTHOG_KEY",
+                "NEXT_PUBLIC_POSTHOG_HOST"
             ],
             "outputs": [
                 ".next/**",
