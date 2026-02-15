@@ -79,7 +79,11 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
             onMouseMove={handleMouse}
             onMouseLeave={handleMouseLeave}
             className={`group relative rounded-2xl overflow-hidden h-[450px] cursor-pointer shimmer-border ${isSoldOut ? 'opacity-70' : ''}`}
-            onClick={() => !isSoldOut && veloBus.emit('open-agent', { message: `I want to book tickets for ${event.title}` })}
+            onClick={() => {
+                if (!isSoldOut) {
+                    openBooking(event);
+                }
+            }}
         >
             <img
                 src={event.image}

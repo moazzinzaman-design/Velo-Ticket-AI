@@ -11,6 +11,8 @@ import VoiceMicrophone from './VoiceMicrophone';
 import NodeTreeMode from './NodeTreeMode';
 
 import { useQuest } from '../context/QuestContext';
+import { useBooking } from '../context/BookingContext';
+import { realEvents } from '../data/realEvents';
 import { veloBus } from '../lib/veloBus';
 import stripePromise from '../lib/stripe';
 
@@ -112,6 +114,7 @@ export default function VeloAgentPanel() {
     const [pendingAction, setPendingAction] = useState<{ action: string, data: any } | null>(null);
 
     const { completeQuest } = useQuest();
+    const { openBooking } = useBooking();
 
     const handleProtectedAction = (action: string, data: any) => {
         setPendingAction({ action, data });
@@ -133,6 +136,29 @@ export default function VeloAgentPanel() {
 
             // Visual feedback for ticket purchase execution
             if (pendingAction.action === 'ticket_purchase') {
+                // Find real event data to open standard booking flow
+                const eventTitle = pendingAction.data.event || pendingAction.data.title;
+                const eventObj = realEvents.find(e => e.title === eventTitle);
+
+                setMessages(prev => [...prev, {
+                    role: 'agent',
+                    text: eventObj
+                        ? 'Opening the interactive seating map for you now...'
+                        : 'Proceeding to secure checkout...'
+                }]);
+
+                if (eventObj) {
+                    // Open the standard booking orchestrator (Seat Selection)
+                    // We wait a moment for the message to be read
+                    setTimeout(() => {
+                        openBooking(eventObj);
+                        setIsOpen(false); // Close the chat panel so they can see the map
+                    }, 1000);
+                    setPendingAction(null);
+                    return;
+                }
+
+                // Fallback for unknown events (or if we want to bypass map for some reason)
                 try {
                     const response = await fetch('/api/checkout_session', {
                         method: 'POST',
@@ -149,6 +175,7 @@ export default function VeloAgentPanel() {
                     const { url, error } = await response.json();
 
                     if (error) {
+                        // ... existing error handling ...
                         console.error('Checkout error:', error);
                         setMessages(prev => [...prev, {
                             role: 'agent',
@@ -159,14 +186,10 @@ export default function VeloAgentPanel() {
 
                     if (url) {
                         window.location.href = url;
-                    } else {
-                        console.error('No checkout URL returned');
-                        setMessages(prev => [...prev, {
-                            role: 'agent',
-                            text: "Error: Could not generate checkout link.",
-                        }]);
                     }
+                    // ... existing error handling ...
                 } catch (err) {
+                    // ... existing error handling ...
                     console.error('Payment error:', err);
                     setMessages(prev => [...prev, {
                         role: 'agent',
@@ -430,8 +453,8 @@ export default function VeloAgentPanel() {
                                     <button
                                         onClick={() => setIsZenMode(!isZenMode)}
                                         className={`p-2 rounded-full transition-colors ${isZenMode
-                                                ? 'bg-green-900/30 text-green-400'
-                                                : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
+                                            ? 'bg-green-900/30 text-green-400'
+                                            : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
                                             }`}
                                         title="Toggle Zen Mode"
                                     >
@@ -460,8 +483,8 @@ export default function VeloAgentPanel() {
 
                                                 {msg.text && (
                                                     <div className={`px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm ${msg.role === 'user'
-                                                            ? 'bg-blue-600 text-white rounded-br-sm'
-                                                            : 'bg-white/10 text-gray-100 rounded-bl-sm border border-white/5'
+                                                        ? 'bg-blue-600 text-white rounded-br-sm'
+                                                        : 'bg-white/10 text-gray-100 rounded-bl-sm border border-white/5'
                                                         }`}>
                                                         {msg.text}
                                                     </div>
@@ -507,8 +530,8 @@ export default function VeloAgentPanel() {
                                     />
 
                                     <div className={`flex-1 flex gap-2 p-1.5 rounded-2xl border transition-all duration-200 ${isZenMode
-                                            ? 'bg-black border-green-800 focus-within:ring-1 focus-within:ring-green-500'
-                                            : 'bg-black/40 border-white/10 focus-within:bg-black/60 focus-within:border-white/20'
+                                        ? 'bg-black border-green-800 focus-within:ring-1 focus-within:ring-green-500'
+                                        : 'bg-black/40 border-white/10 focus-within:bg-black/60 focus-within:border-white/20'
                                         }`}>
                                         <textarea
                                             value={input}
@@ -522,8 +545,8 @@ export default function VeloAgentPanel() {
                                             placeholder={isZenMode ? "> INPUT_COMMAND..." : "Ask me anything..."}
                                             rows={1}
                                             className={`flex-1 bg-transparent border-none focus:ring-0 px-3 py-2.5 resize-none max-h-32 min-h-[44px] ${isZenMode
-                                                    ? 'text-green-400 placeholder-green-800 font-mono'
-                                                    : 'text-white placeholder-white/30'
+                                                ? 'text-green-400 placeholder-green-800 font-mono'
+                                                : 'text-white placeholder-white/30'
                                                 }`}
                                             style={{ height: 'auto', minHeight: '44px' }}
                                         />
