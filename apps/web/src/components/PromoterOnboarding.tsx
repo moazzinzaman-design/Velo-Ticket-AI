@@ -31,7 +31,7 @@ export default function PromoterOnboarding() {
         }
     };
 
-    if (profile.stripeAccountId) {
+    if (profile?.stripe_account_id) {
         return (
             <div className="p-6 border border-green-500/20 rounded-xl bg-green-500/5">
                 <div className="flex items-center gap-4">

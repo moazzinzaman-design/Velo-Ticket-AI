@@ -9,6 +9,8 @@ export interface UserProfile {
     avatar_url: string | null;
     role: 'user' | 'admin' | 'organizer';
     member_since: string | null;
+    stripe_account_id?: string;
+    onboarding_step?: number;
 }
 
 import type { Ticket } from '../types/ticket';
@@ -74,6 +76,8 @@ export const useUser = create<UserState>()(
                         avatar_url: profileData?.avatar_url || session.user.user_metadata.avatar_url,
                         role: profileData?.role || 'user',
                         member_since: new Date(session.user.created_at).toLocaleDateString(),
+                        stripe_account_id: profileData?.stripe_account_id,
+                        onboarding_step: profileData?.onboarding_step
                     };
 
                     set({
