@@ -14,6 +14,7 @@ import { useQuest } from '../context/QuestContext';
 import { useBooking } from '../context/BookingContext';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { realEvents } from '../data/realEvents';
+import { nearbyData } from '../data/nearbyData';
 import { veloBus } from '../lib/veloBus';
 import stripePromise from '../lib/stripe';
 
@@ -120,7 +121,7 @@ export default function VeloAgentPanel() {
     const [pendingAction, setPendingAction] = useState<{ action: string, data: any } | null>(null);
 
     const { completeQuest } = useQuest();
-    const { openBooking } = useBooking();
+    const { openBooking, selectedEvent } = useBooking();
     const { latitude, longitude, requestLocation, hasLocation } = useGeolocation();
 
     // Auto-request location on mount for context
@@ -275,6 +276,47 @@ export default function VeloAgentPanel() {
                         <li>Velo Black Membership (£20/mo)</li>
                     </ul>
                 </div>
+            }]);
+            return;
+        }
+
+        // Nearby Activities Trigger
+        if (lowerText.includes('nearby') || lowerText.includes('activities') || lowerText.includes('do around')) {
+            setIsTyping(false);
+
+            // Use selected event's venue or default to The Sphere
+            const venueName = selectedEvent?.venue || 'The Sphere, London';
+            // Simple string matching for venue in nearbyData keys
+            const matchedKey = Object.keys(nearbyData).find(key => venueName.includes(key)) || 'The Sphere, London';
+            const places = nearbyData[matchedKey];
+
+            setMessages(prev => [...prev, {
+                role: 'agent',
+                text: `Here are some curated experiences near ${venueName} to complete your evening.`,
+                component: (
+                    <div className="flex flex-col gap-3 mt-3">
+                        {places.map((place, i) => (
+                            <div key={i} className="p-3 bg-white/5 border border-white/10 rounded-xl flex gap-3 hover:bg-white/10 transition-colors">
+                                <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
+                                    {place.type === 'Restaurant' ? '🍽️' : place.type === 'Bar' ? '🍸' : place.type === 'Transport' ? '🚆' : '🏨'}
+                                </div>
+                                <div>
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-white font-bold text-sm">{place.name}</h4>
+                                        <div className="flex items-center gap-1">
+                                            <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-white/70">{place.type}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-velo-text-muted text-xs mt-0.5">{place.distance} • {place.priceLevel} • ⭐ {place.rating}</p>
+                                    <p className="text-white/60 text-xs mt-1 leading-tight">{place.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                        <button className="w-full py-2 mt-1 text-xs font-bold text-velo-cyan hover:bg-velo-cyan/10 rounded-lg transition-colors border border-velo-cyan/20">
+                            View All Recommendation
+                        </button>
+                    </div>
+                )
             }]);
             return;
         }

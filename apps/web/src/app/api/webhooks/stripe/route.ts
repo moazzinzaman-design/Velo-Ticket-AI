@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { EmailService } from '../../../../lib/email/EmailService';
+import { AIMessageGenerator } from '../../../../lib/ai/generator';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2023-10-16',
@@ -128,12 +129,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
         // Send confirmation email
         if (userEmail) {
+            // Generate AI Hype Message
+            const aiMessage = await AIMessageGenerator.generateTicketHype(
+                eventTitle,
+                'Music Fan', // We don't have name easily here unless we query profile, fine for now
+                'Velo Venue'
+            );
+
             // Just sending one confirmation for the first ticket valid for now
             // In production, you'd send a summary or iterate
             await EmailService.sendBookingConfirmation(
                 userEmail,
                 eventTitle,
-                tickets_to_insert[0].qr_code
+                tickets_to_insert[0].qr_code,
+                aiMessage
             );
         }
     }

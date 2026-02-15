@@ -36,9 +36,9 @@ const companyLinks = [
 ];
 
 const legalLinks = [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'Cookie Policy', href: '#' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/privacy' },
 ];
 
 const socialLinks = [
@@ -234,11 +234,12 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* ─── Bottom Bar ─── */}
                 <div className="border-t border-white/[0.04] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-white/20">
-                        © {new Date().getFullYear()} Velo Technologies Ltd. All rights reserved.
-                    </p>
+                    <div className="flex flex-col md:flex-row items-center gap-4 text-[10px] text-white/20">
+                        <p>© {new Date().getFullYear()} Velo Digital Ltd. Registered in England & Wales #12345678.</p>
+                        <p>Registered Address: 123 Tech Lane, London, E1 6AN.</p>
+                        <p>Contact: legal@velotickets.com</p>
+                    </div>
                     <div className="flex items-center gap-4 text-xs text-white/20">
                         <span className="flex items-center gap-1">
                             Built with <Heart size={10} className="text-velo-rose/60 inline" /> by the Velo team

@@ -18,6 +18,7 @@ interface BookingConfirmationProps {
     ticketId: string;
     date: string;
     ticketLink: string;
+    aiMessage?: string;
 }
 
 export const BookingConfirmation = ({
@@ -26,6 +27,7 @@ export const BookingConfirmation = ({
     ticketId,
     date,
     ticketLink,
+    aiMessage,
 }: BookingConfirmationProps) => (
     <Html>
         <Head />
@@ -33,9 +35,20 @@ export const BookingConfirmation = ({
         <Body style={main}>
             <Container style={container}>
                 <Heading style={h1}>You're Going!</Heading>
-                <Text style={text}>Hi {userName},</Text>
                 <Text style={text}>
-                    Your booking for <strong>{eventName}</strong> is confirmed.
+                    Hi {userName},
+                </Text>
+
+                {aiMessage && (
+                    <div style={{ padding: '16px', backgroundColor: '#f0f9ff', borderRadius: '8px', marginBottom: '24px', border: '1px solid #bae6fd' }}>
+                        <Text style={{ ...text, margin: 0, color: '#0369a1', fontStyle: 'italic', fontWeight: 500 }}>
+                            "{aiMessage}"
+                        </Text>
+                    </div>
+                )}
+
+                <Text style={text}>
+                    Your ticket for <strong>{eventName}</strong> is confirmed.
                 </Text>
                 <Section style={details}>
                     <Text style={detailText}>Date: {date}</Text>

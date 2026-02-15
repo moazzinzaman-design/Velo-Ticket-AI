@@ -11,48 +11,9 @@ import MagneticButton from '../components/visuals/MagneticButton';
 import ScrollReveal from '../components/visuals/ScrollReveal';
 import { veloBus } from '../lib/veloBus';
 
+import { realEvents } from '../data/realEvents';
 /* ─── Featured Events Data ─── */
-const featuredEvents = [
-    {
-        id: 1,
-        title: 'Daft Punk 2026',
-        venue: 'The Sphere, London',
-        date: 'Mar 15, 2026',
-        time: '20:00',
-        price: 128,
-        image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2940&auto=format&fit=crop',
-        tag: 'TONIGHT',
-        tagColor: 'bg-velo-rose',
-        accentColor: 'from-purple-600 to-blue-600',
-        soldPercentage: 87,
-    },
-    {
-        id: 2,
-        title: 'Coldplay: World Tour',
-        venue: 'Wembley Stadium',
-        date: 'Apr 22, 2026',
-        time: '19:30',
-        price: 95,
-        image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=2940&auto=format&fit=crop',
-        tag: 'SELLING FAST',
-        tagColor: 'bg-amber-500',
-        accentColor: 'from-cyan-500 to-blue-500',
-        soldPercentage: 72,
-    },
-    {
-        id: 3,
-        title: 'Formula 1: British GP',
-        venue: 'Silverstone Circuit',
-        date: 'Jul 6, 2026',
-        time: '14:00',
-        price: 250,
-        image: 'https://images.unsplash.com/photo-1504817343863-5092a923803e?q=80&w=2940&auto=format&fit=crop',
-        tag: 'VIP AVAILABLE',
-        tagColor: 'bg-velo-violet',
-        accentColor: 'from-rose-500 to-orange-500',
-        soldPercentage: 45,
-    },
-];
+const featuredEvents = realEvents.slice(0, 3);
 
 /* ─── How It Works Steps ─── */
 const steps = [
@@ -159,8 +120,13 @@ function AnimatedStat({ target, suffix, label, icon: Icon }: {
 
 
 
+import { useBooking } from '../context/BookingContext';
+import { useRouter } from 'next/navigation';
+
 /* ─── Tilt Event Card ─── */
 function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: number }) {
+    const { openBooking } = useBooking();
+    const router = useRouter(); // Use router
     const cardRef = useRef<HTMLDivElement>(null);
     const x = useMotionValue(0);
     const y = useMotionValue(0);
@@ -190,7 +156,7 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
                 onMouseMove={handleMouse}
                 onMouseLeave={handleMouseLeave}
                 className={`group relative rounded-3xl overflow-hidden h-[440px] holographic-card ${event.soldPercentage < 100 ? 'cursor-pointer' : 'cursor-default'}`}
-                onClick={() => event.soldPercentage < 100 && veloBus.emit('open-agent', { message: `I want to book tickets for ${event.title}` })}
+                onClick={() => event.soldPercentage < 100 && router.push(`/events/${event.id}`)}
             >
                 {/* Image */}
                 <img
@@ -251,9 +217,15 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
                                     <WaitlistButton eventId={event.id} eventTitle={event.title} />
                                 </div>
                             ) : (
-                                <span className="text-sm font-semibold text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 group-hover:bg-white group-hover:text-black transition-all duration-500">
-                                    Book Now
-                                </span>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        router.push(`/events/${event.id}`);
+                                    }}
+                                    className="text-sm font-semibold text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 group-hover:bg-white group-hover:text-black transition-all duration-500"
+                                >
+                                    View Details
+                                </button>
                             )}
                         </div>
                     </div>

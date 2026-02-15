@@ -16,68 +16,84 @@ export interface RealEvent {
     category: string;
     image: string;
     tag: string;
+    tagColor?: string; // Added for UI
+    accentColor?: string; // Added for UI
     soldPercentage: number;
     description?: string;
     hasMerch?: boolean;
     merchItems?: string[];
+    ageRestriction?: 'All Ages' | '18+' | '16+' | '14+';
 }
 
 export const realEvents: RealEvent[] = [
     {
         id: 1,
-        title: "Coldplay: Music of the Spheres",
-        venue: "Wembley Stadium",
+        title: 'Daft Punk 2026',
+        venue: 'The Sphere, London',
+        location: {
+            city: 'London',
+            address: 'Stratford, London E20 1',
+            coordinates: { lat: 51.5400, lng: -0.0100 }
+        },
+        date: 'Mar 15, 2026',
+        time: '20:00',
+        price: 128,
+        category: 'Concert',
+        image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2940&auto=format&fit=crop',
+        tag: 'TONIGHT',
+        tagColor: 'bg-velo-rose',
+        accentColor: 'from-purple-600 to-blue-600',
+        soldPercentage: 87,
+        description: 'The legendary duo returns for a one-night-only holographic spectacle at The Sphere.',
+        hasMerch: true,
+        merchItems: ['Helmet Replica', 'Limited Edition Vinyl'],
+        ageRestriction: 'All Ages'
+    },
+    {
+        id: 2,
+        title: 'Coldplay: World Tour',
+        venue: 'Wembley Stadium',
         location: {
             city: "London",
             address: "Wembley, London HA9 0WS",
             coordinates: { lat: 51.5560, lng: -0.2795 }
         },
-        date: "Aug 22",
-        time: "19:00",
+        date: 'Apr 22, 2026',
+        time: '19:30',
         price: 95,
-        category: "Concert",
-        image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800",
-        tag: "SELLING FAST",
-        soldPercentage: 78,
-        description: "Experience Coldplay's spectacular world tour",
+        category: 'Concert',
+        image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=2940&auto=format&fit=crop',
+        tag: 'SELLING FAST',
+        tagColor: 'bg-amber-500',
+        accentColor: 'from-cyan-500 to-blue-500',
+        soldPercentage: 72,
+        description: 'Experience the magic of Coldplay live under the stars.',
         hasMerch: true,
-        merchItems: ['Tour T-Shirt', 'Limited Vinyl', 'LED Wristband']
-    },
-    {
-        id: 2,
-        title: "Ed Sheeran: Mathematics Tour",
-        venue: "The O2",
-        location: {
-            city: "London",
-            address: "Peninsula Square, London SE10 0DX",
-            coordinates: { lat: 51.5033, lng: 0.0031 }
-        },
-        date: "Sep 15",
-        time: "20:00",
-        price: 85,
-        category: "Concert",
-        image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
-        tag: "MERCH AVAILABLE",
-        soldPercentage: 65,
-        hasMerch: true,
-        merchItems: ['Tour Hoodie', 'Signed Poster']
+        merchItems: ['Eco-Tee', 'Lightband'],
+        ageRestriction: 'All Ages'
     },
     {
         id: 3,
-        title: "Hamilton",
-        venue: "Victoria Palace Theatre",
+        title: 'Formula 1: British GP',
+        venue: 'Silverstone Circuit',
         location: {
-            city: "London",
-            address: "Victoria St, London SW1E 5EA",
-            coordinates: { lat: 51.4965, lng: -0.1426 }
+            city: "Towcester",
+            address: "Towcester NN12 8TN",
+            coordinates: { lat: 52.0786, lng: -1.0169 }
         },
-        date: "Jul 30",
-        time: "19:30",
-        price: 120,
-        category: "Theatre",
-        image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800",
-        tag: "AWARD WINNING",
-        soldPercentage: 92
+        date: 'Jul 6, 2026',
+        time: '14:00',
+        price: 250,
+        category: 'Sports',
+        image: 'https://images.unsplash.com/photo-1504817343863-5092a923803e?q=80&w=2940&auto=format&fit=crop',
+        tag: 'VIP AVAILABLE',
+        tagColor: 'bg-velo-violet',
+        accentColor: 'from-rose-500 to-orange-500',
+        soldPercentage: 45,
+        description: 'Feel the roar of the engines at the home of British motorsport.',
+        hasMerch: true,
+        merchItems: ['Team Cap', 'Model Car'],
+        ageRestriction: '16+'
     },
     {
         id: 4,
@@ -94,7 +110,9 @@ export const realEvents: RealEvent[] = [
         category: "Sports",
         image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800",
         tag: "TONIGHT",
-        soldPercentage: 88
+        tagColor: 'bg-velo-rose',
+        soldPercentage: 88,
+        ageRestriction: '18+'
     },
     {
         id: 5,
@@ -111,9 +129,11 @@ export const realEvents: RealEvent[] = [
         category: "Concert",
         image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800",
         tag: "MERCH AVAILABLE",
+        tagColor: 'bg-velo-cyan',
         soldPercentage: 71,
         hasMerch: true,
-        merchItems: ['Tour T-Shirt', 'Tote Bag', 'Phone Case']
+        merchItems: ['Tour T-Shirt', 'Tote Bag', 'Phone Case'],
+        ageRestriction: 'All Ages'
     },
     {
         id: 6,
@@ -130,7 +150,9 @@ export const realEvents: RealEvent[] = [
         category: "Theatre",
         image: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800",
         tag: "PREMIUM",
-        soldPercentage: 54
+        tagColor: 'bg-indigo-500',
+        soldPercentage: 54,
+        ageRestriction: 'All Ages'
     },
     {
         id: 7,
@@ -147,6 +169,7 @@ export const realEvents: RealEvent[] = [
         category: "Concert",
         image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800",
         tag: "LIMITED",
+        tagColor: 'bg-orange-500',
         soldPercentage: 95,
         hasMerch: true,
         merchItems: ['Love On Tour Hoodie', 'Pleasing Merch']
@@ -166,6 +189,7 @@ export const realEvents: RealEvent[] = [
         category: "Sports",
         image: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800",
         tag: "PREMIUM",
+        tagColor: 'bg-indigo-500',
         soldPercentage: 99
     },
     {
@@ -183,6 +207,7 @@ export const realEvents: RealEvent[] = [
         category: "Theatre",
         image: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800",
         tag: "NEW",
+        tagColor: 'bg-velo-emerald',
         soldPercentage: 42
     },
     {
@@ -200,9 +225,86 @@ export const realEvents: RealEvent[] = [
         category: "Concert",
         image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
         tag: "SELLING FAST",
+        tagColor: 'bg-amber-500',
         soldPercentage: 82,
         hasMerch: true,
         merchItems: ['Renaissance Tour Cap', 'Collector Box Set']
+    },
+    {
+        id: 11,
+        title: "Kevin Hart: Acting My Age",
+        venue: "The O2 Arena",
+        location: {
+            city: "London",
+            address: "Peninsula Square, London SE10 0DX",
+            coordinates: { lat: 51.5030, lng: 0.0032 }
+        },
+        date: "Oct 12",
+        time: "20:00",
+        price: 65,
+        category: "Comedy",
+        image: "https://images.unsplash.com/photo-1585672922759-4244b79ce8ad?w=800",
+        tag: "LAUGH OUT LOUD",
+        tagColor: 'bg-yellow-500',
+        soldPercentage: 60,
+        ageRestriction: '16+'
+    },
+    {
+        id: 12,
+        title: "Van Gogh: The Immersive Experience",
+        venue: "180 Studios",
+        location: {
+            city: "London",
+            address: "180 Strand, London WC2R 1EA",
+            coordinates: { lat: 51.5113, lng: -0.1154 }
+        },
+        date: "Daily",
+        time: "10:00 - 20:00",
+        price: 32,
+        category: "Art",
+        image: "https://images.unsplash.com/photo-1572947650440-e8a97ef053b5?w=800",
+        tag: "MUST SEE",
+        tagColor: 'bg-velo-violet',
+        soldPercentage: 45,
+        ageRestriction: 'All Ages'
+    },
+    {
+        id: 13,
+        title: "Ronnie Scott's All Stars",
+        venue: "Ronnie Scott's Jazz Club",
+        location: {
+            city: "London",
+            address: "47 Frith St, London W1D 4HT",
+            coordinates: { lat: 51.5134, lng: -0.1308 }
+        },
+        date: "Tonight",
+        time: "21:30",
+        price: 55,
+        category: "Music",
+        image: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800",
+        tag: "INTIMATE",
+        tagColor: 'bg-velo-rose',
+        soldPercentage: 92,
+        ageRestriction: '18+'
+    },
+    {
+        id: 14,
+        title: "London Food Festival",
+        venue: "Tobacco Dock",
+        location: {
+            city: "London",
+            address: "Tobacco Quay, Wapping Ln, London E1W 2SF",
+            coordinates: { lat: 51.5076, lng: -0.0594 }
+        },
+        date: "Aug 28",
+        time: "12:00",
+        price: 25,
+        category: "Festival",
+        image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        tag: "TASTY",
+        tagColor: 'bg-orange-500',
+        soldPercentage: 30,
+        ageRestriction: 'All Ages'
     }
 ];
 

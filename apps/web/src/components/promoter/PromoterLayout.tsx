@@ -9,9 +9,13 @@ import {
     BarChart3,
     Settings,
     LogOut,
-    Ticket
+    Ticket,
+    Scan
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useUser } from '../../hooks/useUser';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export default function PromoterLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -19,9 +23,27 @@ export default function PromoterLayout({ children }: { children: React.ReactNode
     const navItems = [
         { label: 'Overview', href: '/promoter', icon: LayoutDashboard },
         { label: 'Create Event', href: '/promoter/create', icon: CalendarPlus },
+        { label: 'Gate Scanner', href: '/promoter/scanner', icon: Scan },
         { label: 'Analytics', href: '/promoter/analytics', icon: BarChart3 },
         { label: 'Settings', href: '/promoter/settings', icon: Settings },
     ];
+
+    const { isAdmin, loading, signOut } = useUser();
+    const router = useRouter();
+
+    if (loading) {
+        return (
+            <div className="h-screen bg-black flex items-center justify-center">
+                <Loader2 className="animate-spin text-white/30" />
+            </div>
+        );
+    }
+
+    if (!isAdmin) {
+        // Only admins can see promoter console for now
+        router.push('/');
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-black flex text-white pt-20">
@@ -43,8 +65,8 @@ export default function PromoterLayout({ children }: { children: React.ReactNode
                                     key={item.href}
                                     href={item.href}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${isActive
-                                            ? 'text-white font-medium'
-                                            : 'text-white/50 hover:text-white hover:bg-white/5'
+                                        ? 'text-white font-medium'
+                                        : 'text-white/50 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     {isActive && (
@@ -63,7 +85,10 @@ export default function PromoterLayout({ children }: { children: React.ReactNode
                 </div>
 
                 <div className="mt-auto p-6 border-t border-white/5">
-                    <button className="flex items-center gap-3 px-4 py-3 text-white/40 hover:text-red-400 transition-colors w-full rounded-xl hover:bg-red-500/10">
+                    <button
+                        onClick={() => signOut().then(() => router.push('/'))}
+                        className="flex items-center gap-3 px-4 py-3 text-white/40 hover:text-red-400 transition-colors w-full rounded-xl hover:bg-red-500/10"
+                    >
                         <LogOut size={18} />
                         <span>Sign Out</span>
                     </button>

@@ -3,15 +3,13 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Crown, Zap, Shield, Ticket, Star } from 'lucide-react';
 import SubscriptionCard from '../../components/SubscriptionCard';
+import LivingBackground from '../../components/LivingBackground';
 
 export default function VeloPlusPage() {
     return (
         <div className="min-h-screen pt-28 pb-20 overflow-hidden">
             {/* Background Effects */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[600px] bg-yellow-500/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[100px]" />
-            </div>
+            <LivingBackground />
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">

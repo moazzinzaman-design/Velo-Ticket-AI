@@ -19,3 +19,4 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+// Force restart: Promoter Console migrated to /promoter

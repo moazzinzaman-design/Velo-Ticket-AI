@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { MapPin, Calendar, Clock, Lock, ShoppingBag } from 'lucide-react';
@@ -24,6 +25,7 @@ interface Event {
     soldPercentage: number;
     hasMerch?: boolean;
     merchItems?: string[];
+    ageRestriction?: string;
 }
 
 const tagColors: Record<string, string> = {
@@ -54,18 +56,19 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
     });
 
     const { openBooking } = useBooking();
+    const router = useRouter(); // Import useRouter
 
     const isSoldOut = event.tag === 'SOLD OUT';
+
+    const handleCardClick = () => {
+        router.push(`/events/${event.id}`);
+    };
 
     return (
         <HolographicCard className={`rounded-2xl overflow-hidden h-[450px] cursor-pointer shimmer-border ${isSoldOut ? 'opacity-70' : ''}`}>
             <div
                 className="w-full h-full relative"
-                onClick={() => {
-                    if (!isSoldOut) {
-                        openBooking(event);
-                    }
-                }}
+                onClick={handleCardClick}
             >
                 <Image
                     src={event.image}
@@ -120,14 +123,26 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
                     {/* Merch Badge - independent from main tag */}
-                    {event.hasMerch && (
-                        <div className="mb-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 backdrop-blur-sm text-[10px] font-bold text-pink-300 uppercase tracking-wider">
-                            <ShoppingBag size={11} />
-                            <span>Merch Available</span>
-                            {event.merchItems && (
-                                <span className="ml-1 w-4 h-4 rounded-full bg-pink-500/40 flex items-center justify-center text-[9px] text-white">
-                                    {event.merchItems.length}
-                                </span>
+                    {(event.hasMerch || event.ageRestriction) && (
+                        <div className="mb-3 flex flex-wrap gap-2">
+                            {event.hasMerch && (
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 backdrop-blur-sm text-[10px] font-bold text-pink-300 uppercase tracking-wider">
+                                    <ShoppingBag size={11} />
+                                    <span>Merch Available</span>
+                                    {event.merchItems && (
+                                        <span className="ml-1 w-4 h-4 rounded-full bg-pink-500/40 flex items-center justify-center text-[9px] text-white">
+                                            {event.merchItems.length}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                            {event.ageRestriction && (
+                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-sm text-[10px] font-bold uppercase tracking-wider ${event.ageRestriction === '18+'
+                                    ? 'bg-red-500/20 border border-red-500/30 text-red-300'
+                                    : 'bg-green-500/20 border border-green-500/30 text-green-300'
+                                    }`}>
+                                    <span>{event.ageRestriction}</span>
+                                </div>
                             )}
                         </div>
                     )}
@@ -159,11 +174,11 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        openBooking(event);
+                                        handleCardClick();
                                     }}
                                     className="text-sm font-semibold px-4 py-2 rounded-full text-white bg-gradient-magic backdrop-blur-sm border border-white/20 hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-500"
                                 >
-                                    Book Now
+                                    View Details
                                 </button>
                             )}
                         </div>

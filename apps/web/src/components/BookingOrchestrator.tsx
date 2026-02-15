@@ -4,6 +4,7 @@ import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import SeatSelector from './SeatSelector';
+import EventDetailsModal from './EventDetailsModal';
 import { findBestVenue } from '../data/venueData';
 import { EmailService } from '../lib/email/EmailService';
 import { useUser } from '../hooks/useUser';
@@ -19,16 +20,22 @@ export default function BookingOrchestrator() {
         return findBestVenue(selectedEvent.venue);
     }, [selectedEvent]);
 
+    const [showDetails, setShowDetails] = React.useState(true);
     const [dynamicPrice, setDynamicPrice] = React.useState<number | null>(null);
 
     React.useEffect(() => {
         if (selectedEvent) {
+            setShowDetails(true); // Reset to show details when a new event is selected
             fetch(`/api/events/${selectedEvent.id}/price`)
                 .then(res => res.json())
                 .then(data => setDynamicPrice(data.price))
                 .catch(err => console.error('Failed to fetch price:', err));
         }
     }, [selectedEvent]);
+
+    const handleBookSeats = () => {
+        setShowDetails(false);
+    };
 
     const handleCheckout = async (seatIds: string[], total: number, addOns?: Record<string, number>) => {
         if (!selectedEvent) return;
@@ -80,14 +87,26 @@ export default function BookingOrchestrator() {
 
     return (
         <AnimatePresence>
-            {isBookingOpen && selectedEvent && venue && (
-                <SeatSelector
-                    venue={venue}
-                    eventTitle={selectedEvent.title}
-                    basePrice={dynamicPrice || selectedEvent.price}
-                    onClose={closeBooking}
-                    onConfirm={handleCheckout}
-                />
+            {isBookingOpen && selectedEvent && (
+                <>
+                    {showDetails ? (
+                        <EventDetailsModal
+                            event={selectedEvent}
+                            onClose={closeBooking}
+                            onBook={handleBookSeats}
+                        />
+                    ) : (
+                        venue && (
+                            <SeatSelector
+                                venue={venue}
+                                eventTitle={selectedEvent.title}
+                                basePrice={dynamicPrice || selectedEvent.price}
+                                onClose={closeBooking}
+                                onConfirm={handleCheckout}
+                            />
+                        )
+                    )}
+                </>
             )}
         </AnimatePresence>
     );

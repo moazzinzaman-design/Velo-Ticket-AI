@@ -2,9 +2,9 @@ import { resend } from './client';
 import { BookingConfirmation } from '../../emails/BookingConfirmation';
 
 export const EmailService = {
-    async sendBookingConfirmation(to: string, eventName: string, ticketId: string) {
+    async sendBookingConfirmation(to: string, eventName: string, ticketId: string, aiMessage?: string) {
         if (!process.env.RESEND_API_KEY) {
-            console.log(`[Mock Email] To: ${to}, Event: ${eventName}, Ticket: ${ticketId}`);
+            console.log(`[Mock Email] To: ${to}, Event: ${eventName}, Ticket: ${ticketId}, AI: ${aiMessage}`);
             return;
         }
 
@@ -18,7 +18,8 @@ export const EmailService = {
                     eventName,
                     ticketId,
                     date: 'Date TBD',
-                    ticketLink: `https://velo.app/tickets/${ticketId}`
+                    ticketLink: `https://velo.app/tickets/${ticketId}`,
+                    aiMessage,
                 }),
             });
             console.log(`Email sent to ${to}`);

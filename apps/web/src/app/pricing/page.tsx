@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Crown, Building2, Sparkles, ArrowRight, Shield, Users, Globe, Ticket } from 'lucide-react';
 import Link from 'next/link';
+import LivingBackground from '../../components/LivingBackground';
 
 const PLANS = [
     {
@@ -101,8 +102,9 @@ export default function PricingPage() {
     const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
 
     return (
-        <div className="min-h-screen bg-velo-bg-deep pt-32 pb-20 px-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-velo-bg-deep pt-32 pb-20 px-6 relative overflow-hidden">
+            <LivingBackground />
+            <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

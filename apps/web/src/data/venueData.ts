@@ -751,6 +751,110 @@ const bristolBeaconLayout: Venue = {
     },
 };
 
+// Emirates Stadium, London
+const emiratesLayout: Venue = {
+    id: 11,
+    name: 'Emirates Stadium',
+    address: 'Hornsey Rd, London N7 7AJ',
+    coordinates: { lat: 51.5549, lng: -0.1084 },
+    layout: {
+        width: 800,
+        height: 800,
+        stage: [
+            { x: 350, y: 350 },
+            { x: 450, y: 350 },
+            { x: 450, y: 450 },
+            { x: 350, y: 450 },
+        ], // Center stage / Pitch for events
+        sections: [
+            {
+                id: 'north-bank',
+                name: 'North Bank',
+                color: '#dc2626',
+                priceMultiplier: 1.5,
+                polygon: [{ x: 100, y: 50 }, { x: 700, y: 50 }, { x: 650, y: 150 }, { x: 150, y: 150 }],
+                seats: generateSeatsInGrid(150, 60, 5, 40, 16, 12, 'NB'),
+            },
+            {
+                id: 'clock-end',
+                name: 'Clock End',
+                color: '#dc2626',
+                priceMultiplier: 1.5,
+                polygon: [{ x: 100, y: 650 }, { x: 700, y: 650 }, { x: 650, y: 750 }, { x: 150, y: 750 }],
+                seats: generateSeatsInGrid(150, 660, 5, 40, 16, 12, 'CE'),
+            },
+            {
+                id: 'east-stand',
+                name: 'East Stand',
+                color: '#991b1b',
+                priceMultiplier: 1.8,
+                polygon: [{ x: 720, y: 100 }, { x: 780, y: 100 }, { x: 780, y: 700 }, { x: 720, y: 700 }],
+                seats: generateSeatsInGrid(730, 120, 30, 4, 18, 12, 'E'),
+            },
+            {
+                id: 'west-stand',
+                name: 'West Stand',
+                color: '#991b1b',
+                priceMultiplier: 1.8,
+                polygon: [{ x: 20, y: 100 }, { x: 80, y: 100 }, { x: 80, y: 700 }, { x: 20, y: 700 }],
+                seats: generateSeatsInGrid(30, 120, 30, 4, 18, 12, 'W'),
+            }
+        ],
+    },
+};
+
+// Silverstone Circuit
+const silverstoneLayout: Venue = {
+    id: 12,
+    name: 'Silverstone Circuit',
+    address: 'Towcester NN12 8TN',
+    coordinates: { lat: 52.0786, lng: -1.0169 },
+    layout: {
+        width: 1200,
+        height: 600,
+        stage: [
+            { x: 500, y: 0 },
+            { x: 700, y: 0 },
+            { x: 700, y: 20 },
+            { x: 500, y: 20 },
+        ], // Start/Finish Line
+        sections: [
+            {
+                id: 'abbey',
+                name: 'Abbey Grandstand',
+                color: '#dc2626',
+                priceMultiplier: 2.5,
+                polygon: [{ x: 50, y: 50 }, { x: 250, y: 50 }, { x: 250, y: 150 }, { x: 50, y: 150 }],
+                seats: generateSeatsInGrid(60, 60, 6, 15, 14, 12, 'AB'),
+            },
+            {
+                id: 'becketts',
+                name: 'Becketts',
+                color: '#7c3aed',
+                priceMultiplier: 2.0,
+                polygon: [{ x: 300, y: 50 }, { x: 500, y: 50 }, { x: 500, y: 150 }, { x: 300, y: 150 }],
+                seats: generateSeatsInGrid(310, 60, 6, 15, 14, 12, 'BE'),
+            },
+            {
+                id: 'stowe',
+                name: 'Stowe',
+                color: '#2563eb',
+                priceMultiplier: 1.8,
+                polygon: [{ x: 550, y: 50 }, { x: 750, y: 50 }, { x: 750, y: 150 }, { x: 550, y: 150 }],
+                seats: generateSeatsInGrid(560, 60, 6, 15, 14, 12, 'ST'),
+            },
+            {
+                id: 'club',
+                name: 'Club Corner',
+                color: '#059669',
+                priceMultiplier: 2.2,
+                polygon: [{ x: 800, y: 50 }, { x: 1000, y: 50 }, { x: 1000, y: 150 }, { x: 800, y: 150 }],
+                seats: generateSeatsInGrid(810, 60, 6, 15, 14, 12, 'CL'),
+            }
+        ],
+    },
+};
+
 // Generic Fallback Venue — used when no specific layout matches
 const genericVenueLayout: Venue = {
     id: 999,
@@ -838,6 +942,8 @@ export const venues: Venue[] = [
     firstDirectLayout,
     utilitaArenaLayout,
     bristolBeaconLayout,
+    emiratesLayout,
+    silverstoneLayout,
 ];
 
 // Alias map: keyword → venue id
@@ -852,6 +958,8 @@ const venueAliases: { keywords: string[]; venueId: number }[] = [
     { keywords: ['first direct', 'leeds arena'], venueId: 8 },
     { keywords: ['utilita arena', 'birmingham arena', 'resorts world arena', 'nec arena', 'birmingham'], venueId: 9 },
     { keywords: ['bristol beacon', 'colston hall', 'bristol'], venueId: 10 },
+    { keywords: ['emirates', 'arsenal'], venueId: 11 },
+    { keywords: ['silverstone', 'british gp'], venueId: 12 },
 ];
 
 export function getVenueById(id: number): Venue | undefined {

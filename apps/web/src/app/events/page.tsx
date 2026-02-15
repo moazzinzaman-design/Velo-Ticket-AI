@@ -75,40 +75,28 @@ export default function EventsPage() {
     const [eventsSource, setEventsSource] = useState<'cache' | 'live' | 'fallback'>('fallback');
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-    // Fetch events from API
+    // Use local data directly for consistency
     const fetchEvents = useCallback(async () => {
         setIsLoadingEvents(true);
-        try {
-            const params = new URLSearchParams({
-                city: currentCity,
-                limit: '50',
-            });
+        // Simulate network delay for effect
+        await new Promise(resolve => setTimeout(resolve, 600));
 
-            if (activeCategory !== 'All') {
-                params.append('category', activeCategory);
-            }
+        // Filter locally based on category and search
+        let filtered = [...allEvents];
 
-            if (location.lat && location.lng) {
-                params.append('lat', String(location.lat));
-                params.append('lng', String(location.lng));
-                params.append('radius', String(distance));
-            }
-
-            const response = await fetch(`/api/events?${params.toString()}`);
-            const data = await response.json();
-
-            setEvents(data.events || []);
-            setEventsSource(data.source);
-            setLastUpdated(data.cached_at || new Date().toISOString());
-        } catch (error) {
-            console.error('Failed to fetch events:', error);
-            // Fallback to mock data
-            setEvents(allEvents);
-            setEventsSource('fallback');
-        } finally {
-            setIsLoadingEvents(false);
+        if (activeCategory !== 'All') {
+            filtered = filtered.filter(e => e.category === getCategoryFromString(activeCategory));
         }
-    }, [currentCity, activeCategory, location, distance]);
+
+        if (currentCity !== 'All Cities' && currentCity !== 'Near Me') {
+            // Simple city filter if needed, or just return all for demo richness
+            // filtered = filtered.filter(e => e.location.city === currentCity);
+        }
+
+        setEvents(filtered);
+        setEventsSource('local');
+        setIsLoadingEvents(false);
+    }, [activeCategory, currentCity]);
 
     // Fetch events on mount and when dependencies change
     useEffect(() => {

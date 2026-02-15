@@ -18,6 +18,7 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
     const [transform, setTransform] = useState({ scale: 1, x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [lastTap, setLastTap] = useState(0);
 
     // Zoom with mouse wheel
     const handleWheel = useCallback((e: WheelEvent) => {
@@ -31,6 +32,7 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
         const svg = svgRef.current;
         if (!svg) return;
         svg.addEventListener('wheel', handleWheel, { passive: false });
+        // Handle touch zoom/pan if needed specifically via listeners
         return () => svg.removeEventListener('wheel', handleWheel);
     }, [handleWheel]);
 
@@ -54,6 +56,31 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
         setIsDragging(false);
     };
 
+    // Touch Support
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (e.touches.length === 1) {
+            const now = Date.now();
+            if (now - lastTap < 300) {
+                // Double tap to reset
+                setTransform({ scale: 1, x: 0, y: 0 });
+                setLastTap(0);
+                return;
+            }
+            setLastTap(now);
+            setIsDragging(true);
+            setDragStart({ x: e.touches[0].clientX - transform.x, y: e.touches[0].clientY - transform.y });
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        setTransform(prev => ({
+            ...prev,
+            x: e.touches[0].clientX - dragStart.x,
+            y: e.touches[0].clientY - dragStart.y,
+        }));
+    };
+
     const getSeatColor = (seat: Seat, section: Section): string => {
         if (isSelected(seat.id)) return '#3b82f6'; // Blue for selected
         if (seat.status === 'taken') return '#6b7280'; // Gray for taken
@@ -66,17 +93,17 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
     };
 
     return (
-        <div className="relative w-full h-full bg-velo-bg-card rounded-2xl overflow-hidden border border-white/10">
+        <div className="relative w-full h-full bg-velo-bg-card rounded-2xl overflow-hidden border border-white/10 touch-none">
             {/* Controls overlay */}
-            <div className="absolute top-4 right-4 z-20 bg-velo-bg-deep/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
-                <p className="text-xs text-velo-text-muted">
-                    Zoom: {Math.round(transform.scale * 100)}% | Scroll to zoom, drag to pan
+            <div className="absolute top-4 right-4 z-20 bg-velo-bg-deep/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10 pointer-events-none">
+                <p className="text-[10px] md:text-xs text-velo-text-muted">
+                    {Math.round(transform.scale * 100)}% | Drag to pan, pinch/scroll to zoom
                 </p>
             </div>
 
             {/* Tooltip */}
             {hoveredSeat && hoveredSection && (
-                <div className="absolute top-4 left-4 z-20 bg-velo-bg-deep/95 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10 shadow-xl">
+                <div className="absolute top-4 left-4 z-20 bg-velo-bg-deep/95 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10 shadow-xl pointer-events-none">
                     <div className="text-sm font-semibold text-white mb-1">
                         {hoveredSection.name}
                     </div>
@@ -97,6 +124,9 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleMouseUp}
                 style={{
                     transform: `scale(${transform.scale}) translate(${transform.x / transform.scale}px, ${transform.y / transform.scale}px)`,
                     transition: isDragging ? 'none' : 'transform 0.1s ease-out',
@@ -145,21 +175,30 @@ export default function VenueMap({ layout, onSeatClick, isSelected, basePrice }:
 
                         {/* Seats */}
                         {section.seats.map((seat) => (
-                            <circle
-                                key={seat.id}
-                                cx={seat.x}
-                                cy={seat.y}
-                                r="4"
-                                fill={getSeatColor(seat, section)}
-                                stroke={isSelected(seat.id) ? '#60a5fa' : 'none'}
-                                strokeWidth={isSelected(seat.id) ? '2' : '0'}
-                                opacity={seat.status === 'taken' ? 0.3 : 1}
-                                className={`transition-all duration-200 ${seat.status === 'available' ? 'cursor-pointer hover:r-6' : 'cursor-not-allowed'
-                                    }`}
-                                onClick={() => seat.status === 'available' && onSeatClick(seat)}
-                                onMouseEnter={() => setHoveredSeat(seat)}
-                                onMouseLeave={() => setHoveredSeat(null)}
-                            />
+                            <g key={seat.id}>
+                                {/* Invisible hit area for easier clicking on mobile */}
+                                <circle
+                                    cx={seat.x}
+                                    cy={seat.y}
+                                    r="10"
+                                    fill="transparent"
+                                    className="cursor-pointer"
+                                    onClick={() => seat.status === 'available' && onSeatClick(seat)}
+                                    onMouseEnter={() => setHoveredSeat(seat)}
+                                    onMouseLeave={() => setHoveredSeat(null)}
+                                />
+                                <circle
+                                    cx={seat.x}
+                                    cy={seat.y}
+                                    r="4"
+                                    fill={getSeatColor(seat, section)}
+                                    stroke={isSelected(seat.id) ? '#60a5fa' : 'none'}
+                                    strokeWidth={isSelected(seat.id) ? '2' : '0'}
+                                    opacity={seat.status === 'taken' ? 0.3 : 1}
+                                    className={`transition-all duration-200 pointer-events-none ${seat.status === 'available' ? 'hover:r-6' : ''
+                                        }`}
+                                />
+                            </g>
                         ))}
 
                         {/* Section label */}

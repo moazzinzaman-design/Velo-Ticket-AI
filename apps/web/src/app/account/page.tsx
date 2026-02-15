@@ -10,7 +10,15 @@ import { motion } from 'framer-motion';
 
 export default function AccountPage() {
     const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'membership' | 'settings'>('overview');
-    const { profile, tickets, isVeloPlus } = useUser();
+    const { profile, tickets, isVeloPlus, loading } = useUser();
+
+    if (loading) {
+        return <div className="min-h-screen pt-32 text-center text-white">Loading account...</div>;
+    }
+
+    if (!profile) {
+        return <div className="min-h-screen pt-32 text-center text-white">Please sign in to view your account.</div>;
+    }
 
     // Render content based on active tab
     const renderContent = () => {
@@ -26,7 +34,7 @@ export default function AccountPage() {
                 return (
                     <div className="space-y-8">
                         <div>
-                            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {profile.name.split(' ')[0]}</h2>
+                            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {profile?.name?.split(' ')[0] || 'User'}</h2>
                             <p className="text-white/60">Here is what's happening with your Velo account.</p>
                         </div>
 

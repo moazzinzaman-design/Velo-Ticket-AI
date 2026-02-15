@@ -28,13 +28,15 @@ ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
 -- Policies: Users can view their own tickets
+DROP POLICY IF EXISTS "Users can view own tickets" ON tickets;
 CREATE POLICY "Users can view own tickets" ON tickets
   FOR SELECT USING (auth.uid() = user_id);
 
 -- Policies: Service role can insert/update (for webhooks)
--- Note: Service role bypasses RLS by default, but explicit policies don't hurt
+DROP POLICY IF EXISTS "Service role can insert tickets" ON tickets;
 CREATE POLICY "Service role can insert tickets" ON tickets
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Users can view own orders" ON orders;
 CREATE POLICY "Users can view own orders" ON orders
   FOR SELECT USING (auth.uid() = user_id);

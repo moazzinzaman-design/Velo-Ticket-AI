@@ -25,7 +25,7 @@ export default function PromoterDashboard() {
     const { events, loading } = useEvents();
 
     return (
-        <PromoterLayout>
+        <>
             <div className="mb-8 flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-bold mb-2">Dashboard Overview</h1>
@@ -116,6 +116,6 @@ export default function PromoterDashboard() {
                     </table>
                 </div>
             </div>
-        </PromoterLayout>
+        </>
     );
 }
