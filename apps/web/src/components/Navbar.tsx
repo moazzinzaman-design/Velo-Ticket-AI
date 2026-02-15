@@ -14,6 +14,8 @@ import { useUser } from '../hooks/useUser';
 
 const mainLinks = [
     { label: 'Events', href: '/events' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'API', href: '/api-access' },
     { label: 'My Velo', href: '/account' },
     { label: 'Velo+', href: '/plus' },
 ];
