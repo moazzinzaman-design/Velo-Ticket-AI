@@ -55,6 +55,7 @@ export default function HolographicCard({ children, className = '' }: Holographi
                 rotateX,
                 rotateY,
                 transformStyle: 'preserve-3d',
+                willChange: 'transform',
             }}
             className={`relative group ${className}`}
         >

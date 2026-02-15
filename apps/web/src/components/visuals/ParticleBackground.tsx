@@ -73,7 +73,7 @@ export default function ParticleBackground() {
 
         const initParticles = () => {
             particles = [];
-            const numberOfParticles = Math.min(100, (canvas.width * canvas.height) / 15000);
+            const numberOfParticles = Math.min(60, (canvas.width * canvas.height) / 20000);
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push(new Particle());
             }
@@ -90,6 +90,10 @@ export default function ParticleBackground() {
                 for (let j = i; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
+
+                    // Optimization: Skip valid distance check if obviously too far
+                    if (Math.abs(dx) > 100 || Math.abs(dy) > 100) continue;
+
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < 100) {

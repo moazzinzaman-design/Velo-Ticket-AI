@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 
 export default function AuroraBackground() {
     return (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-            <div className="absolute inset-0 bg-transparent blur-[100px] opacity-30">
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
+            <div className="absolute inset-0 bg-transparent blur-[80px] opacity-20 will-change-transform translate-z-0">
                 {/* Blob 1 - Cyan */}
                 <motion.div
                     animate={{
