@@ -12,13 +12,13 @@ export default function VeloPlusSuccessPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const sessionId = searchParams.get('session_id');
-    const { fireConfetti } = useConfetti();
+    const { fire } = useConfetti();
 
     useEffect(() => {
         if (sessionId) {
-            fireConfetti();
+            fire();
         }
-    }, [sessionId, fireConfetti]);
+    }, [sessionId, fire]);
 
     return (
         <div className="min-h-screen pt-28 pb-20 overflow-hidden relative flex items-center justify-center">
