@@ -259,7 +259,7 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
                     </div>
                 </div>
             </motion.div>
-        </Reveal>
+        </ScrollReveal>
     );
 }
 
@@ -320,14 +320,16 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <div onClick={() => window.location.href = '/events'}>
+                            <Link href="/events">
                                 <MagneticButton className="btn-primary flex items-center gap-2 text-base px-8 py-4">
                                     <Ticket size={18} /> Explore Events <ArrowRight size={18} />
                                 </MagneticButton>
-                            </div>
-                            <MagneticButton href="/features" className="btn-outline flex items-center gap-2 text-base px-8 py-4" strength={0.25}>
-                                See How It Works
-                            </MagneticButton>
+                            </Link>
+                            <Link href="/features">
+                                <MagneticButton className="btn-outline flex items-center gap-2 text-base px-8 py-4">
+                                    See How It Works
+                                </MagneticButton>
+                            </Link>
                         </div>
 
                         {/* Trust bar */}
@@ -376,7 +378,7 @@ export default function Home() {
                                 View All Events <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
-                    </Reveal>
+                    </ScrollReveal>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {featuredEvents.map((event, i) => (
@@ -396,7 +398,7 @@ export default function Home() {
                             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">How Velo Works</h2>
                             <p className="text-velo-text-secondary max-w-lg mx-auto">Three simple steps to your perfect evening. No hassle, no scalpers, just unforgettable experiences.</p>
                         </div>
-                    </Reveal>
+                    </ScrollReveal>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                         {steps.map((step, i) => (
@@ -418,7 +420,7 @@ export default function Home() {
                                     <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
                                     <p className="text-sm text-velo-text-secondary leading-relaxed max-w-xs mx-auto">{step.description}</p>
                                 </div>
-                            </Reveal>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>
@@ -445,7 +447,7 @@ export default function Home() {
                             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Built for the Future</h2>
                             <p className="text-velo-text-secondary max-w-lg mx-auto">Powered by 20 stages of innovation, Velo is the most advanced event platform ever built.</p>
                         </div>
-                    </Reveal>
+                    </ScrollReveal>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {features.map((feature, i) => (
@@ -462,7 +464,7 @@ export default function Home() {
                                     <h3 className="text-xl font-bold text-white mb-2 relative z-10">{feature.title}</h3>
                                     <p className="text-sm text-velo-text-secondary leading-relaxed relative z-10">{feature.description}</p>
                                 </div>
-                            </Reveal>
+                            </ScrollReveal>
                         ))}
                     </div>
 
@@ -472,7 +474,7 @@ export default function Home() {
                                 Explore All Features <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
-                    </Reveal>
+                    </ScrollReveal>
                 </div>
             </section>
 
@@ -538,7 +540,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                    </Reveal>
+                    </ScrollReveal>
                 </div>
             </section>
         </>
