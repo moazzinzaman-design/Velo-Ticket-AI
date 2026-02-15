@@ -226,7 +226,7 @@ export default function EventDetailsPage() {
                         </div>
 
                         <button
-                            onClick={() => openBooking(event as any)}
+                            onClick={() => openBooking(event as any, { skipDetails: true })}
                             className="w-full bg-white text-black hover:bg-white/90 font-bold py-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 text-lg shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
                         >
                             <Ticket size={22} />

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
 import { createClient } from '../../lib/supabase/client';
 import TicketCard from '../../components/TicketCard';
-import { Loader2, Settings, Ticket, User as UserIcon, LogOut } from 'lucide-react';
+import { Loader2, Settings, Ticket, User as UserIcon, LogOut, Building2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ParticleCanvas from '../../components/ParticleCanvas';
 
@@ -308,11 +308,12 @@ export default function ProfilePage() {
                             </div>
                             <h2 className="text-2xl font-bold text-white mb-2">Organizer Dashboard</h2>
                             <p className="text-velo-text-secondary max-w-md mx-auto mb-8">
-                                Your events, analytics, and sales data will live here.
-                                This feature is currently in beta for select partners.
+                                Manage your events, track real-time sales, and access audience insights.
+                                <br /> <br />
+                                <span className="text-xs font-mono text-velo-cyan bg-velo-cyan/10 px-2 py-1 rounded">BETA ACCESS</span>
                             </p>
-                            <button className="px-6 py-3 rounded-xl bg-velo-cyan/10 text-velo-cyan font-bold hover:bg-velo-cyan/20 transition-colors">
-                                Request Early Access
+                            <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-velo-cyan to-blue-500 text-white font-bold hover:shadow-lg hover:shadow-velo-cyan/20 transition-all">
+                                Request Access
                             </button>
                         </motion.div>
                     )}

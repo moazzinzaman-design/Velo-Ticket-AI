@@ -21,6 +21,11 @@ export function useDynamicPricing({ basePrice, eventDate, mockCurrentDate }: Use
         let price: number;
         let nextTierDate: Date | null;
 
+        // Fallback for invalid dates
+        if (isNaN(daysRemaining)) {
+            return { price: basePrice, tier: 'standard' as PricingTier, daysRemaining: 0, nextTierDate: null };
+        }
+
         if (daysRemaining > 30) {
             tier = 'early';
             price = basePrice * 0.8;

@@ -16,8 +16,10 @@ interface EventData {
 interface BookingContextType {
     isBookingOpen: boolean;
     selectedEvent: EventData | null;
-    openBooking: (event: EventData) => void;
+    openBooking: (event: EventData, options?: { skipDetails?: boolean }) => void;
     closeBooking: () => void;
+    showDetails: boolean;
+    setShowDetails: (show: boolean) => void;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -25,9 +27,11 @@ const BookingContext = createContext<BookingContextType | undefined>(undefined);
 export function BookingProvider({ children }: { children: ReactNode }) {
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
+    const [showDetails, setShowDetails] = useState(true);
 
-    const openBooking = (event: EventData) => {
+    const openBooking = (event: EventData, options?: { skipDetails?: boolean }) => {
         setSelectedEvent(event);
+        setShowDetails(!options?.skipDetails);
         setIsBookingOpen(true);
     };
 
@@ -44,6 +48,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
                 selectedEvent,
                 openBooking,
                 closeBooking,
+                showDetails,      // Exposed
+                setShowDetails,   // Exposed
             }}
         >
             {children}

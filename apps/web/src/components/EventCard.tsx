@@ -49,7 +49,10 @@ interface EventCardProps {
 
 export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
     // Dynamic Pricing Hook
-    const eventDateObj = new Date(event.date + ', ' + new Date().getFullYear()); // Simple parsing
+    const currentYear = new Date().getFullYear();
+    const hasYear = event.date.includes(String(currentYear)) || event.date.match(/\d{4}/);
+    const dateString = hasYear ? event.date : `${event.date}, ${currentYear}`;
+    const eventDateObj = new Date(dateString);
     const { price, tier, daysRemaining, nextTierDate } = useDynamicPricing({
         basePrice: event.price,
         eventDate: eventDateObj,

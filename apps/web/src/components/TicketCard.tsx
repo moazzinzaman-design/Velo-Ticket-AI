@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import { Calendar, MapPin, Clock, RotateCcw, PartyPopper } from 'lucide-react';
+import { Calendar, MapPin, Clock, RotateCcw, PartyPopper, DollarSign } from 'lucide-react';
 import ResaleModal from './resale/ResaleModal';
 
 interface Ticket {
@@ -23,6 +23,9 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
         // In a real app, this would update the backend
         console.log(`Listed for ${price}`);
         // Optionally update local ticket status/UI to "LISTED"
+        setIsResaleModalOpen(false);
+        setFlipped(false);
+        alert(`Successfully listed for £${price}!`);
     };
 
     return (
@@ -139,4 +142,4 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
 }
 
 // Icon helper
-import { DollarSign } from 'lucide-react';
+// import { DollarSign } from 'lucide-react'; 

@@ -10,7 +10,7 @@ import { EmailService } from '../lib/email/EmailService';
 import { useUser } from '../hooks/useUser';
 
 export default function BookingOrchestrator() {
-    const { isBookingOpen, selectedEvent, closeBooking } = useBooking();
+    const { isBookingOpen, selectedEvent, closeBooking, showDetails, setShowDetails } = useBooking();
     const { profile } = useUser();
     const [isProcessing, setIsProcessing] = React.useState(false);
 
@@ -20,12 +20,11 @@ export default function BookingOrchestrator() {
         return findBestVenue(selectedEvent.venue);
     }, [selectedEvent]);
 
-    const [showDetails, setShowDetails] = React.useState(true);
     const [dynamicPrice, setDynamicPrice] = React.useState<number | null>(null);
 
     React.useEffect(() => {
         if (selectedEvent) {
-            setShowDetails(true); // Reset to show details when a new event is selected
+            // We don't reset showDetails here anymore because openBooking handles it
             fetch(`/api/events/${selectedEvent.id}/price`)
                 .then(res => res.json())
                 .then(data => setDynamicPrice(data.price))
@@ -42,7 +41,8 @@ export default function BookingOrchestrator() {
         setIsProcessing(true);
 
         // Use real user email from auth, fall back to empty string
-        const userEmail = profile?.email || '';
+        console.log('Checkout Profile State:', profile);
+        const userEmail = (profile && profile.email) ? profile.email : '';
 
         // Send booking confirmation email to the actual user
         if (userEmail) {
