@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Outfit } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 
 const outfit = Outfit({
     subsets: ['latin'],
@@ -78,6 +79,7 @@ export default function RootLayout({
                         </BookingProvider>
                     </QuestProvider>
                 </PostHogProvider>
+                <Analytics />
             </body>
         </html>
     )
