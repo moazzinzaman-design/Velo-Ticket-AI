@@ -26,13 +26,22 @@ export default function PaymentSuccessHandler() {
 
             // Add ticket to user's wallet
             addTicket({
-                id: `tkt_${Date.now()}`,
-                eventId: Math.floor(Math.random() * 100),
-                eventTitle: 'Confirmed Event',
-                eventDate: 'Upcoming',
-                eventVenue: 'Venue TBC',
-                eventImage: 'https://images.unsplash.com/photo-1459749411177-718f43d57004?q=80&w=2670&auto=format&fit=crop',
-                seat: 'General Admission',
+                id: `tkt-${Date.now()}`,
+                event_id: 'evt-confirmed',
+                event_title: 'Confirmed Event',
+                event_date: 'Upcoming',
+                event_time: '20:00',
+                venue_name: 'Venue TBC',
+                event_image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2670&auto=format&fit=crop',
+                seat_info: 'General Admission',
+                section: 'GA',
+                row: '-',
+                seat_number: '-',
+                price: 0,
+                owner_name: 'You',
+                purchase_date: new Date().toISOString(),
+                qr_code: `VELO-${Date.now()}`,
+                status: 'active'
             });
 
             // Send confirmation email

@@ -11,15 +11,7 @@ export interface UserProfile {
     member_since: string | null;
 }
 
-interface Ticket {
-    id: string;
-    event_title: string;
-    event_date: string;
-    venue_name: string;
-    seat_info: string;
-    qr_code: string;
-    status: string;
-}
+import type { Ticket } from '../types/ticket';
 
 interface UserState {
     user: any | null; // Supabase Auth User
@@ -35,6 +27,7 @@ interface UserState {
     cancelVeloPlus: () => void;
     checkSession: () => Promise<void>;
     signOut: () => Promise<void>;
+    addTicket: (ticket: Ticket) => void;
 }
 
 export const useUser = create<UserState>()(
@@ -50,6 +43,7 @@ export const useUser = create<UserState>()(
             toggleVeloPlus: () => set((state) => ({ isVeloPlus: !state.isVeloPlus })),
             joinVeloPlus: () => set({ isVeloPlus: true }),
             cancelVeloPlus: () => set({ isVeloPlus: false }),
+            addTicket: (ticket) => set((state) => ({ tickets: [...state.tickets, ticket] })),
 
             checkSession: async () => {
                 const supabase = createClient();
@@ -103,7 +97,7 @@ export const useUser = create<UserState>()(
         }),
         {
             name: 'velo-user-storage',
-            partialize: (state) => ({ isVeloPlus: state.isVeloPlus }), // Persist only Velo Plus status
+            partialize: (state) => ({ isVeloPlus: state.isVeloPlus, tickets: state.tickets }), // Persist tickets too
         }
     )
 );

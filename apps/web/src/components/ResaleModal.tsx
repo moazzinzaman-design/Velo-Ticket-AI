@@ -69,8 +69,8 @@ export default function ResaleModal({ ticket, onClose, onConfirmSearch }: Resale
                                     <BadgeCheck className="text-velo-violet" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-white text-sm">{ticket.eventName}</h4>
-                                    <p className="text-xs text-velo-text-muted">{ticket.seat}</p>
+                                    <h4 className="font-bold text-white text-sm">{ticket.event_title}</h4>
+                                    <p className="text-xs text-velo-text-muted">{ticket.seat_info}</p>
                                 </div>
                             </div>
 

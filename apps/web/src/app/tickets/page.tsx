@@ -85,13 +85,13 @@ export default function TicketWallet() {
                     ) : (
                         <div className="space-y-12">
                             {groupedTickets.map((group) => (
-                                <div key={group.eventId} className="relative">
+                                <div key={group.event_id} className="relative">
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className="w-1 h-8 bg-velo-violet rounded-full" />
                                         <div>
-                                            <h2 className="text-xl font-bold text-white">{group.eventName}</h2>
+                                            <h2 className="text-xl font-bold text-white">{group.event_title}</h2>
                                             <p className="text-sm text-velo-text-secondary">
-                                                {group.eventDate} • {group.venueName}
+                                                {group.event_date} • {group.venue_name}
                                             </p>
                                         </div>
                                     </div>

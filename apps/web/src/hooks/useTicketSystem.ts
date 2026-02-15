@@ -6,75 +6,75 @@ import type { Ticket, TicketGroup } from '../types/ticket';
 const MOCK_TICKETS: Ticket[] = [
     {
         id: 'TKT-8842-AB',
-        eventId: 'evt-1',
-        eventName: 'Daft Punk 2026',
-        venueName: 'The Sphere, London',
-        eventDate: 'Fri, 14 Aug',
-        eventTime: '19:30',
-        seat: 'Sec VIP, Row A, Seat 1',
+        event_id: 'evt-1',
+        event_title: 'Daft Punk 2026',
+        venue_name: 'The Sphere, London',
+        event_date: 'Fri, 14 Aug',
+        event_time: '19:30',
+        seat_info: 'Sec VIP, Row A, Seat 1',
         section: 'VIP',
         row: 'A',
-        seatNumber: '1',
+        seat_number: '1',
         price: 256,
-        qrPayload: 'VELO:8842:SIG:xyz',
+        qr_code: 'VELO:8842:SIG:xyz',
         status: 'active',
-        ownerName: 'Moazzin Zaman',
-        purchaseDate: '2026-02-14T10:00:00Z',
+        owner_name: 'Moazzin Zaman',
+        purchase_date: '2026-02-14T10:00:00Z',
         gate: 'A',
-        isResalable: true,
-        maxResalePrice: 256,
-        isVerified: true,
-        authenticityHash: '0x7f83...9a2b',
-        originalIssuer: 'Velo Protocol',
+        is_resalable: true,
+        max_resale_price: 256,
+        is_verified: true,
+        authenticity_hash: '0x7f83...9a2b',
+        original_issuer: 'Velo Protocol',
         tier: 'platinum'
     },
     {
         id: 'TKT-8842-AC',
-        eventId: 'evt-1',
-        eventName: 'Daft Punk 2026',
-        venueName: 'The Sphere, London',
-        eventDate: 'Fri, 14 Aug',
-        eventTime: '19:30',
-        seat: 'Sec VIP, Row A, Seat 2',
+        event_id: 'evt-1',
+        event_title: 'Daft Punk 2026',
+        venue_name: 'The Sphere, London',
+        event_date: 'Fri, 14 Aug',
+        event_time: '19:30',
+        seat_info: 'Sec VIP, Row A, Seat 2',
         section: 'VIP',
         row: 'A',
-        seatNumber: '2',
+        seat_number: '2',
         price: 256,
-        qrPayload: 'VELO:8842:SIG:abc',
+        qr_code: 'VELO:8842:SIG:abc',
         status: 'active',
-        ownerName: 'Moazzin Zaman',
-        purchaseDate: '2026-02-14T10:00:00Z',
+        owner_name: 'Moazzin Zaman',
+        purchase_date: '2026-02-14T10:00:00Z',
         gate: 'A',
-        isResalable: true,
-        maxResalePrice: 256,
-        isVerified: true,
-        authenticityHash: '0x3c21...8b4a',
-        originalIssuer: 'Velo Protocol',
-        isPriceProtected: true,
-        purchasePrice: 275, // Higher original price to show drop
+        is_resalable: true,
+        max_resale_price: 256,
+        is_verified: true,
+        authenticity_hash: '0x3c21...8b4a',
+        original_issuer: 'Velo Protocol',
+        is_price_protected: true,
+        purchase_price: 275, // Higher original price to show drop
         tier: 'vip'
     },
     {
         id: 'TKT-9921-ZA',
-        eventId: 'evt-2',
-        eventName: 'Formula 1: British GP',
-        venueName: 'Silverstone Circuit',
-        eventDate: 'Sun, 07 Jul',
-        eventTime: '14:00',
-        seat: 'Grandstand A, Row 20, Seat 45',
+        event_id: 'evt-2',
+        event_title: 'Formula 1: British GP',
+        venue_name: 'Silverstone Circuit',
+        event_date: 'Sun, 07 Jul',
+        event_time: '14:00',
+        seat_info: 'Grandstand A, Row 20, Seat 45',
         section: 'Grandstand A',
         row: '20',
-        seatNumber: '45',
+        seat_number: '45',
         price: 450,
-        qrPayload: 'VELO:9921:SIG:f1f1',
+        qr_code: 'VELO:9921:SIG:f1f1',
         status: 'active',
-        ownerName: 'Moazzin Zaman',
-        purchaseDate: '2026-01-20T15:30:00Z',
+        owner_name: 'Moazzin Zaman',
+        purchase_date: '2026-01-20T15:30:00Z',
         gate: 'Green',
-        isResalable: false,
-        isVerified: true,
-        authenticityHash: '0x1a9b...7c4d',
-        originalIssuer: 'Silverstone Circuit',
+        is_resalable: false,
+        is_verified: true,
+        authenticity_hash: '0x1a9b...7c4d',
+        original_issuer: 'Silverstone Circuit',
         tier: 'standard'
     }
 ];
@@ -92,17 +92,17 @@ export function useTicketSystem() {
         const groups: Record<string, TicketGroup> = {};
 
         tickets.forEach(ticket => {
-            if (!groups[ticket.eventId]) {
-                groups[ticket.eventId] = {
-                    eventId: ticket.eventId,
-                    eventName: ticket.eventName,
-                    eventDate: ticket.eventDate,
-                    eventTime: ticket.eventTime,
-                    venueName: ticket.venueName,
+            if (!groups[ticket.event_id]) {
+                groups[ticket.event_id] = {
+                    event_id: ticket.event_id,
+                    event_title: ticket.event_title,
+                    event_date: ticket.event_date,
+                    event_time: ticket.event_time,
+                    venue_name: ticket.venue_name,
                     tickets: []
                 };
             }
-            groups[ticket.eventId].tickets.push(ticket);
+            groups[ticket.event_id].tickets.push(ticket);
         });
 
         return Object.values(groups);
@@ -120,7 +120,7 @@ export function useTicketSystem() {
                 return {
                     ...t,
                     status: 'listed',
-                    resalePrice: price
+                    resale_price: price
                 };
             }
             return t;

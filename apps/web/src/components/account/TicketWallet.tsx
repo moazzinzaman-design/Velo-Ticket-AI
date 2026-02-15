@@ -39,9 +39,9 @@ export default function TicketWallet() {
                             >
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-bold text-white mb-1">{ticket.eventTitle}</h3>
+                                        <h3 className="text-xl font-bold text-white mb-1">{ticket.event_title}</h3>
                                         <div className="flex items-center gap-2 text-white/60 text-sm">
-                                            <MapPin size={14} /> {ticket.eventVenue}
+                                            <MapPin size={14} /> {ticket.venue_name}
                                         </div>
                                     </div>
                                     <div className="bg-white/10 backdrop-blur-md p-2 rounded-xl">
@@ -51,18 +51,18 @@ export default function TicketWallet() {
 
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-4 text-sm text-white/80">
-                                        <span className="flex items-center gap-1.5"><Calendar size={14} /> {ticket.eventDate}</span>
+                                        <span className="flex items-center gap-1.5"><Calendar size={14} /> {ticket.event_date}</span>
                                     </div>
                                     <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                                         <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Seat Location</p>
-                                        <p className="text-white font-medium">{ticket.seat}</p>
+                                        <p className="text-white font-medium">{ticket.seat_info}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <Image
-                                src={ticket.eventImage}
-                                alt={ticket.eventTitle}
+                                src={ticket.event_image || 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2940&auto=format&fit=crop'}
+                                alt={ticket.event_title}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
@@ -83,7 +83,7 @@ export default function TicketWallet() {
                                 )}
                             </button>
                             <button
-                                onClick={() => handleSendToEmail(ticket.id, ticket.eventTitle)}
+                                onClick={() => handleSendToEmail(ticket.id, ticket.event_title)}
                                 className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-all"
                             >
                                 {emailSentFor === ticket.id ? (
@@ -145,7 +145,7 @@ export default function TicketWallet() {
                                 <button
                                     onClick={() => {
                                         const ticket = tickets.find(t => t.id === selectedTicket);
-                                        if (ticket) handleSendToEmail(ticket.id, ticket.eventTitle);
+                                        if (ticket) handleSendToEmail(ticket.id, ticket.event_title);
                                     }}
                                     className="py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2"
                                 >

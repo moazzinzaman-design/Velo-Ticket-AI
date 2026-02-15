@@ -1,36 +1,37 @@
 export interface Ticket {
     id: string;
-    eventId: string;
-    eventName: string;
-    venueName: string;
-    eventDate: string;
-    eventTime: string;
-    seat: string; // e.g., "Sec A, Row 5, Seat 12"
+    event_id: string;
+    event_title: string;
+    venue_name: string;
+    event_date: string;
+    event_time: string;
+    seat_info: string; // e.g., "Sec A, Row 5, Seat 12"
     section: string;
     row: string;
-    seatNumber: string;
+    seat_number: string;
     price: number;
-    qrPayload: string; // The data encoded in the QR
+    qr_code: string; // The data encoded in the QR
     status: 'active' | 'used' | 'transferred' | 'listed';
-    ownerName: string;
-    purchaseDate: string;
+    owner_name: string;
+    purchase_date: string;
     gate?: string;
-    isResalable?: boolean;
-    resalePrice?: number;
-    maxResalePrice?: number;
-    isVerified?: boolean;
-    authenticityHash?: string;
-    originalIssuer?: string;
-    isPriceProtected?: boolean;
-    purchasePrice?: number;
+    is_resalable?: boolean;
+    resale_price?: number;
+    max_resale_price?: number;
+    is_verified?: boolean;
+    authenticity_hash?: string;
+    original_issuer?: string;
+    is_price_protected?: boolean;
+    purchase_price?: number;
     tier?: 'standard' | 'early-access' | 'vip' | 'platinum'; // For dynamic art
+    event_image?: string;
 }
 
 export interface TicketGroup {
-    eventId: string;
-    eventName: string;
-    eventDate: string;
-    eventTime: string;
-    venueName: string;
+    event_id: string;
+    event_title: string;
+    event_date: string;
+    event_time: string;
+    venue_name: string;
     tickets: Ticket[];
 }

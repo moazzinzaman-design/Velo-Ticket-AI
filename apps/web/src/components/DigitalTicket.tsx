@@ -190,7 +190,7 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                         </button>
 
                         {/* Quick Sell Button - Front Face */}
-                        {ticket.isResalable !== false && ticket.status !== 'listed' && (
+                        {ticket.is_resalable !== false && ticket.status !== 'listed' && (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -214,11 +214,11 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                     <div className="space-y-4 flex-1">
                         <div className="flex justify-between border-b border-white/10 pb-3">
                             <span className="text-velo-text-muted text-sm">Date</span>
-                            <span className="text-white font-medium">{ticket.eventDate}</span>
+                            <span className="text-white font-medium">{ticket.event_date}</span>
                         </div>
                         <div className="flex justify-between border-b border-white/10 pb-3">
                             <span className="text-velo-text-muted text-sm">Time</span>
-                            <span className="text-white font-medium">{ticket.eventTime}</span>
+                            <span className="text-white font-medium">{ticket.event_time}</span>
                         </div>
                         <div className="flex justify-between border-b border-white/10 pb-3">
                             <span className="text-velo-text-muted text-sm">Gate</span>
@@ -232,10 +232,10 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                             <span className="text-velo-text-muted text-sm">Price</span>
                             <span className="text-white font-medium">{formatPrice(ticket.price)}</span>
                         </div>
-                        {ticket.isPriceProtected && (
+                        {ticket.is_price_protected && (
                             <div className="flex justify-between border-b border-white/10 pb-3">
                                 <span className="text-blue-400 text-sm font-bold">Protected Price</span>
-                                <span className="text-blue-400 font-medium">{formatPrice(ticket.purchasePrice || 0)}</span>
+                                <span className="text-blue-400 font-medium">{formatPrice(ticket.purchase_price || 0)}</span>
                             </div>
                         )}
                     </div>
@@ -244,10 +244,10 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                         {ticket.status === 'listed' ? (
                             <div className="w-full py-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-center gap-2 mb-3">
                                 <Share2 className="text-yellow-500" size={18} />
-                                <span className="text-yellow-500 font-bold">Listed for {formatPrice(ticket.resalePrice || 0)}</span>
+                                <span className="text-yellow-500 font-bold">Listed for {formatPrice(ticket.resale_price || 0)}</span>
                             </div>
                         ) : (
-                            ticket.isResalable !== false && (
+                            ticket.is_resalable !== false && (
                                 <button
                                     className="w-full py-3 bg-white text-black font-bold rounded-xl flex items-center justify-center gap-2 mb-3 hover:bg-gray-100 transition-colors"
                                     onClick={(e) => {

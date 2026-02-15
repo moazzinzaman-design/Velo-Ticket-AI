@@ -72,10 +72,10 @@ export default function AccountPage() {
                             <h3 className="text-xl font-bold text-white mb-4">Next Up</h3>
                             {tickets.length > 0 ? (
                                 <div className="flex items-center gap-6">
-                                    <img src={tickets[0].eventImage} alt="Event" className="w-20 h-20 rounded-xl object-cover" />
+                                    <img src={tickets[0].event_image} alt="Event" className="w-20 h-20 rounded-xl object-cover" />
                                     <div>
-                                        <h4 className="text-lg font-bold text-white">{tickets[0].eventTitle}</h4>
-                                        <p className="text-white/60">{tickets[0].eventDate} • {tickets[0].eventVenue}</p>
+                                        <h4 className="text-lg font-bold text-white">{tickets[0].event_title}</h4>
+                                        <p className="text-white/60">{tickets[0].event_date} • {tickets[0].venue_name}</p>
                                     </div>
                                     <button
                                         onClick={() => setActiveTab('tickets')}
