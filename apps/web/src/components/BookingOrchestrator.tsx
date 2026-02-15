@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import SeatSelector from './SeatSelector';
 import { venues } from '../data/venueData'; // Using mock venue data for now
+import { EmailService } from '../lib/email/EmailService';
 
 export default function BookingOrchestrator() {
     const { isBookingOpen, selectedEvent, closeBooking } = useBooking();
@@ -17,6 +18,13 @@ export default function BookingOrchestrator() {
     const handleCheckout = async (seatIds: string[], total: number) => {
         if (!selectedEvent) return;
         setIsProcessing(true);
+
+        // Track booking confirmation email trigger (mock)
+        EmailService.sendBookingConfirmation(
+            'user@example.com', // In a real app, this comes from useUser()
+            selectedEvent.title,
+            `VELO-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+        );
 
         try {
             const response = await fetch('/api/checkout_session', {
