@@ -9,7 +9,8 @@ const nextConfig = {
             { protocol: 'https', hostname: 'd1plawd8huk6hh.cloudfront.net' },
             { protocol: 'https', hostname: 'eocjiduoyhdpcdytpwuk.supabase.co' }
         ]
-    }
+    },
+    serverComponentsExternalPackages: ['@react-pdf/renderer', 'qrcode', 'puppeteer-core', '@sparticuz/chromium']
 };
 
 module.exports = nextConfig;
