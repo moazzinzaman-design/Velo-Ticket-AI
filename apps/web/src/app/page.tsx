@@ -7,7 +7,8 @@ import { ArrowRight, Sparkles, Shield, Zap, Globe, Star, Calendar, MapPin, Clock
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ParticleCanvas from '../components/ParticleCanvas';
 import WaitlistButton from '../components/WaitlistButton';
-import MagneticButton from '../components/MagneticButton';
+import MagneticButton from '../components/visuals/MagneticButton';
+import ScrollReveal from '../components/visuals/ScrollReveal';
 import { veloBus } from '../lib/veloBus';
 
 /* ─── Featured Events Data ─── */
@@ -156,26 +157,7 @@ function AnimatedStat({ target, suffix, label, icon: Icon }: {
     );
 }
 
-/* ─── Section Reveal Wrapper (Choreographed) ─── */
-function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'scale' }) {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-80px' });
-    const variants = {
-        up: { hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0 } },
-        left: { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0 } },
-        scale: { hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1 } },
-    };
-    return (
-        <motion.div
-            ref={ref}
-            initial={variants[direction].hidden}
-            animate={isInView ? variants[direction].visible : variants[direction].hidden}
-            transition={{ duration: 0.8, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-            {children}
-        </motion.div>
-    );
-}
+
 
 /* ─── Tilt Event Card ─── */
 function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: number }) {
@@ -201,7 +183,7 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
     }, [x, y]);
 
     return (
-        <Reveal delay={index * 0.12}>
+        <ScrollReveal delay={index * 0.12}>
             <motion.div
                 ref={cardRef}
                 style={{ rotateX: springRotateX, rotateY: springRotateY, transformPerspective: 1000 }}
@@ -338,9 +320,11 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <MagneticButton href="/events" className="btn-primary flex items-center gap-2 text-base px-8 py-4" strength={0.3}>
-                                <Ticket size={18} /> Explore Events <ArrowRight size={18} />
-                            </MagneticButton>
+                            <div onClick={() => window.location.href = '/events'}>
+                                <MagneticButton className="btn-primary flex items-center gap-2 text-base px-8 py-4">
+                                    <Ticket size={18} /> Explore Events <ArrowRight size={18} />
+                                </MagneticButton>
+                            </div>
                             <MagneticButton href="/features" className="btn-outline flex items-center gap-2 text-base px-8 py-4" strength={0.25}>
                                 See How It Works
                             </MagneticButton>
@@ -381,7 +365,7 @@ export default function Home() {
             {/* ─── FEATURED EVENTS ─── */}
             <section className="section-padding" id="events">
                 <div className="max-w-7xl mx-auto">
-                    <Reveal>
+                    <ScrollReveal>
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-14 gap-4">
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-velo-violet mb-3">Curated For You</div>
@@ -406,7 +390,7 @@ export default function Home() {
             <section className="section-padding relative">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-velo-violet/[0.03] to-transparent" />
                 <div className="max-w-7xl mx-auto relative">
-                    <Reveal>
+                    <ScrollReveal>
                         <div className="text-center mb-20">
                             <div className="text-xs font-semibold uppercase tracking-[0.2em] text-velo-cyan mb-3">Simple & Seamless</div>
                             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">How Velo Works</h2>
@@ -416,7 +400,7 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                         {steps.map((step, i) => (
-                            <Reveal key={step.title} delay={i * 0.15}>
+                            <ScrollReveal key={step.title} delay={i * 0.15}>
                                 <div className="relative text-center group">
                                     {/* Connector line */}
                                     {i < steps.length - 1 && (
@@ -455,7 +439,7 @@ export default function Home() {
             {/* ─── FEATURES PREVIEW ─── */}
             <section className="section-padding">
                 <div className="max-w-7xl mx-auto">
-                    <Reveal>
+                    <ScrollReveal>
                         <div className="text-center mb-16">
                             <div className="text-xs font-semibold uppercase tracking-[0.2em] text-velo-emerald mb-3">Powered by Innovation</div>
                             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Built for the Future</h2>
@@ -465,7 +449,7 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {features.map((feature, i) => (
-                            <Reveal key={feature.title} delay={i * 0.1}>
+                            <ScrollReveal key={feature.title} delay={i * 0.1}>
                                 <div className="glass-card-hover rounded-2xl p-8 cursor-default group holographic-card magnetic-hover liquid-glass">
                                     <div className="flex items-start justify-between mb-5 relative z-10">
                                         <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-velo-violet/20 transition-all duration-500`}>
@@ -482,7 +466,7 @@ export default function Home() {
                         ))}
                     </div>
 
-                    <Reveal delay={0.3}>
+                    <ScrollReveal delay={0.3}>
                         <div className="text-center mt-10">
                             <Link href="/features" className="text-sm font-medium text-velo-cyan hover:text-white transition-colors inline-flex items-center gap-1 group">
                                 Explore All Features <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -495,7 +479,7 @@ export default function Home() {
             {/* ─── NEWSLETTER / CTA BANNER ─── */}
             <section className="section-padding">
                 <div className="max-w-5xl mx-auto">
-                    <Reveal>
+                    <ScrollReveal>
                         <div className="relative rounded-3xl overflow-hidden">
                             {/* Aurora gradient background */}
                             <div className="absolute inset-0 aurora-bg" />
