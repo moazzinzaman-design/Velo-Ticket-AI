@@ -19,6 +19,7 @@
         "@types/mapbox-gl": "^3.4.1",
         "@types/qrcode": "^1.5.6",
         "@velo/agent": "*",
+        "@vercel/analytics": "^1.4.1",
         "dotenv": "^16.4.7",
         "framer-motion": "^10.0.0",
         "lucide-react": "^0.263.1",
