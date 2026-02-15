@@ -18,7 +18,7 @@ interface DigitalTicketProps {
 }
 
 export default function DigitalTicket({ ticket, onClose, onListForResale }: DigitalTicketProps) {
-    const [rotatedQR, setRotatedQR] = useState(ticket.qrPayload);
+    const [rotatedQR, setRotatedQR] = useState(ticket.qr_code);
     const [nfcMode, setNfcMode] = useState(false);
     const [showBack, setShowBack] = useState(false);
     const [showResaleModal, setShowResaleModal] = useState(false);
@@ -64,10 +64,10 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
     // Simulate rotating QR code for security
     useEffect(() => {
         const interval = setInterval(() => {
-            setRotatedQR(`${ticket.qrPayload}:${Date.now()}`);
+            setRotatedQR(`${ticket.qr_code}:${Date.now()}`);
         }, 15000); // Rotate every 15s
         return () => clearInterval(interval);
-    }, [ticket.qrPayload]);
+    }, [ticket.qr_code]);
 
     return (
         <div className="relative w-full max-w-sm mx-auto perspective-1000">
@@ -96,7 +96,7 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                         )}
 
                         <div className="absolute top-4 left-4 z-30 flex flex-col gap-2">
-                            {ticket.isVerified && (
+                            {ticket.is_verified && (
                                 <div
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -106,7 +106,7 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                                     <GuaranteedBadge />
                                 </div>
                             )}
-                            {ticket.isPriceProtected && (
+                            {ticket.is_price_protected && (
                                 <div
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -118,8 +118,8 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                             )}
                         </div>
 
-                        <h2 className="text-2xl font-bold text-white leading-tight mb-1">{ticket.eventName}</h2>
-                        <p className="text-white/80 text-sm">{ticket.venueName}</p>
+                        <h2 className="text-2xl font-bold text-white leading-tight mb-1">{ticket.event_title}</h2>
+                        <p className="text-white/80 text-sm">{ticket.venue_name}</p>
                     </div>
 
                     {/* Ticket Body */}
@@ -142,7 +142,7 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                             </div>
                             <div className="text-center">
                                 <p className="text-xs text-velo-text-muted uppercase tracking-wider">SEAT</p>
-                                <p className="text-xl font-bold text-white">{ticket.seatNumber}</p>
+                                <p className="text-xl font-bold text-white">{ticket.seat_number}</p>
                             </div>
                         </div>
 
@@ -282,15 +282,15 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                 )}
                 {showAuthenticity && (
                     <AuthenticityModal
-                        hash={ticket.authenticityHash || 'Unknown Hash'}
-                        issuer={ticket.originalIssuer || 'Velo Protocol'}
+                        hash={ticket.authenticity_hash || 'Unknown Hash'}
+                        issuer={ticket.original_issuer || 'Velo Protocol'}
                         onClose={() => setShowAuthenticity(false)}
                         key="auth-modal"
                     />
                 )}
                 {showPriceProtection && (
                     <PriceHistoryModal
-                        purchasePrice={ticket.purchasePrice || ticket.price}
+                        purchasePrice={ticket.purchase_price || ticket.price}
                         currentPrice={135} // Mock current market price
                         onClose={() => setShowPriceProtection(false)}
                         key="price-modal"

@@ -36,8 +36,8 @@ export default function ExperienceDashboard({ ticket, onEntryClick }: Experience
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Live Experience • Starting Soon</span>
                     </div>
-                    <h2 className="text-2xl font-bold text-white">{ticket.eventName}</h2>
-                    <p className="text-sm text-velo-text-secondary">{ticket.venueName}</p>
+                    <h2 className="text-2xl font-bold text-white">{ticket.event_title}</h2>
+                    <p className="text-sm text-velo-text-secondary">{ticket.venue_name}</p>
                 </div>
                 <div className="text-right">
                     <p className="text-xs text-velo-text-muted uppercase tracking-wider mb-1">Gate {ticket.gate || 'A'}</p>
