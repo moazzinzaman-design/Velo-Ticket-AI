@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AIMessageGenerator } from '../../../../../lib/ai/generator';
+import { AIMessageGenerator } from '../../../../lib/ai/generator';
 
 export async function POST(req: Request) {
     try {
