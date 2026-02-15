@@ -38,6 +38,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning className={outfit.variable}>
+            <head>
+                <link href='https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css' rel='stylesheet' />
+            </head>
             <body className={`${outfit.className} antialiased`}>
                 <QuestProvider>
                     <BookingProvider>

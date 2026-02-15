@@ -11,13 +11,16 @@
     "dependencies": {
         "@stripe/stripe-js": "^8.7.0",
         "@supabase/supabase-js": "^2.95.3",
+        "@types/mapbox-gl": "^3.4.1",
         "@velo/agent": "*",
         "framer-motion": "^10.0.0",
         "lucide-react": "^0.263.1",
+        "mapbox-gl": "^3.18.1",
         "next": "latest",
         "qrcode.react": "^4.2.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-map-gl": "^8.1.0",
         "recharts": "^3.7.0",
         "stripe": "^20.3.1",
         "zustand": "^5.0.11"

@@ -7,6 +7,12 @@ import { veloBus } from '../../lib/veloBus';
 import WaitlistButton from '../../components/WaitlistButton';
 import EventCard from '../../components/EventCard';
 import { useDynamicTheme, getCategoryFromString } from '../../hooks/useDynamicTheme';
+import { useGeolocation } from '../../hooks/useGeolocation';
+import LocationSelector from '../../components/LocationSelector';
+import DistanceFilter from '../../components/DistanceFilter';
+import { RealEvent } from '../../data/realEvents';
+import MapView from '../../components/MapView';
+import { LayoutGrid, Map as MapIcon } from 'lucide-react';
 
 const categories = ['All', 'Concerts', 'Sports', 'Theatre', 'Comedy', 'Festivals', 'Exhibitions'];
 
@@ -22,116 +28,7 @@ const tagColors: Record<string, string> = {
     'SOLD OUT': 'bg-zinc-600',
 };
 
-const allEvents = [
-    {
-        id: 1,
-        title: 'Daft Punk 2026',
-        venue: 'The Sphere, London',
-        date: 'Mar 15, 2026',
-        time: '20:00',
-        price: 128,
-        category: 'Concerts',
-        image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=800&auto=format&fit=crop',
-        tag: 'TONIGHT',
-        soldPercentage: 87,
-    },
-    {
-        id: 2,
-        title: 'Coldplay: World Tour',
-        venue: 'Wembley Stadium',
-        date: 'Apr 22, 2026',
-        time: '19:30',
-        price: 95,
-        category: 'Concerts',
-        image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=800&auto=format&fit=crop',
-        tag: 'SELLING FAST',
-        soldPercentage: 72,
-    },
-    {
-        id: 3,
-        title: 'Formula 1: British GP',
-        venue: 'Silverstone Circuit',
-        date: 'Jul 6, 2026',
-        time: '14:00',
-        price: 250,
-        category: 'Sports',
-        image: 'https://images.unsplash.com/photo-1504817343863-5092a923803e?q=80&w=800&auto=format&fit=crop',
-        tag: 'VIP AVAILABLE',
-        soldPercentage: 45,
-    },
-    {
-        id: 4,
-        title: 'Hamilton: The Musical',
-        venue: 'Victoria Palace Theatre',
-        date: 'May 10, 2026',
-        time: '19:30',
-        price: 65,
-        category: 'Theatre',
-        image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?q=80&w=800&auto=format&fit=crop',
-        tag: 'AWARD WINNING',
-        soldPercentage: 91,
-    },
-    {
-        id: 5,
-        title: 'Glastonbury Festival',
-        venue: 'Worthy Farm, Somerset',
-        date: 'Jun 25, 2026',
-        time: '12:00',
-        price: 340,
-        category: 'Festivals',
-        image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800&auto=format&fit=crop',
-        tag: 'LIMITED',
-        soldPercentage: 95,
-    },
-    {
-        id: 6,
-        title: 'Kevin Hart: Live',
-        venue: 'The O2 Arena',
-        date: 'Aug 15, 2026',
-        time: '20:00',
-        price: 55,
-        category: 'Comedy',
-        image: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?q=80&w=800&auto=format&fit=crop',
-        tag: 'NEW',
-        soldPercentage: 18,
-    },
-    {
-        id: 7,
-        title: 'Wimbledon Finals',
-        venue: 'All England Club',
-        date: 'Jul 14, 2026',
-        time: '14:00',
-        price: 180,
-        category: 'Sports',
-        image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=800&auto=format&fit=crop',
-        tag: 'PREMIUM',
-        soldPercentage: 68,
-    },
-    {
-        id: 8,
-        title: 'Immersive Van Gogh',
-        venue: 'Frameless, London',
-        date: 'Ongoing',
-        time: '10:00–21:00',
-        price: 25,
-        category: 'Exhibitions',
-        image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800&auto=format&fit=crop',
-        tag: 'POPULAR',
-        soldPercentage: 55,
-    },
-    {
-        id: 9,
-        title: 'Taylor Swift: Eras Tour',
-        venue: 'Wembley Stadium',
-        date: 'Sep 5, 2026',
-        time: '18:00',
-        price: 110,
-        category: 'Concerts',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800&auto=format&fit=crop',
-        tag: 'SOLD OUT',
-        soldPercentage: 100,
-    },
-];
+import { realEvents as allEvents } from '../../data/realEvents';
 
 function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'scale' }) {
     const ref = useRef(null);
@@ -163,6 +60,82 @@ export default function EventsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const { setCategory, theme } = useDynamicTheme();
 
+    // Location state
+    const [currentCity, setCurrentCity] = useState('London');
+    const [location, setLocation] = useState<{ lat?: number; lng?: number }>({});
+    const [distance, setDistance] = useState(15);
+    const geolocation = useGeolocation();
+
+    // View state
+    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+
+    // Events fetching state
+    const [events, setEvents] = useState<RealEvent[]>([]);
+    const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+    const [eventsSource, setEventsSource] = useState<'cache' | 'live' | 'fallback'>('fallback');
+    const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+
+    // Fetch events from API
+    const fetchEvents = useCallback(async () => {
+        setIsLoadingEvents(true);
+        try {
+            const params = new URLSearchParams({
+                city: currentCity,
+                limit: '50',
+            });
+
+            if (activeCategory !== 'All') {
+                params.append('category', activeCategory);
+            }
+
+            if (location.lat && location.lng) {
+                params.append('lat', String(location.lat));
+                params.append('lng', String(location.lng));
+                params.append('radius', String(distance));
+            }
+
+            const response = await fetch(`/api/events?${params.toString()}`);
+            const data = await response.json();
+
+            setEvents(data.events || []);
+            setEventsSource(data.source);
+            setLastUpdated(data.cached_at || new Date().toISOString());
+        } catch (error) {
+            console.error('Failed to fetch events:', error);
+            // Fallback to mock data
+            setEvents(allEvents);
+            setEventsSource('fallback');
+        } finally {
+            setIsLoadingEvents(false);
+        }
+    }, [currentCity, activeCategory, location, distance]);
+
+    // Fetch events on mount and when dependencies change
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
+    // Handle location changes
+    const handleLocationChange = (newLocation: { city?: string; lat?: number; lng?: number }) => {
+        if (newLocation.city) setCurrentCity(newLocation.city);
+        if (newLocation.lat && newLocation.lng) {
+            setLocation({ lat: newLocation.lat, lng: newLocation.lng });
+        }
+    };
+
+    // Handle geolocation request
+    const handleRequestGeolocation = () => {
+        geolocation.requestLocation();
+    };
+
+    // Update location when geolocation succeeds
+    useEffect(() => {
+        if (geolocation.hasLocation && geolocation.latitude && geolocation.longitude) {
+            setLocation({ lat: geolocation.latitude, lng: geolocation.longitude });
+            setCurrentCity('Near Me');
+        }
+    }, [geolocation.hasLocation, geolocation.latitude, geolocation.longitude]);
+
     // Sync theme with category filter
     useEffect(() => {
         if (activeCategory === 'All') {
@@ -177,11 +150,10 @@ export default function EventsPage() {
     const mockDate = new Date();
     mockDate.setDate(mockDate.getDate() + daysShift);
 
-    const filteredEvents = allEvents.filter((event) => {
-        const matchesCategory = activeCategory === 'All' || event.category === activeCategory;
+    const filteredEvents = events.filter((event) => {
         const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             event.venue.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        return matchesSearch;
     });
 
     return (
@@ -221,44 +193,70 @@ export default function EventsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.15 }}
-                    className="flex flex-col md:flex-row gap-4 items-start md:items-center"
+                    className="flex flex-col gap-4"
                 >
-                    {/* Search */}
-                    <div className="relative flex-1 w-full md:max-w-sm">
-                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-velo-text-muted" />
-                        <input
-                            type="text"
-                            placeholder="Search events or venues..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-velo-text-muted text-sm focus:outline-none focus:border-velo-violet/50 focus:ring-1 focus:ring-velo-violet/30 transition-all"
-                        />
+                    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                        {/* Search Bar */}
+                        <div className="relative w-full md:w-96">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                            <input
+                                type="text"
+                                placeholder="Search events, artists, or venues..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:border-velo-violet/50 focus:bg-white/10 transition-all font-light"
+                            />
+                        </div>
+
+                        {/* Location Controls */}
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <LocationSelector
+                                currentCity={currentCity}
+                                onLocationChange={handleLocationChange}
+                                onRequestGeolocation={handleRequestGeolocation}
+                                isLoadingLocation={geolocation.loading}
+                            />
+                            <div className="h-8 w-px bg-white/10 hidden md:block" />
+                            <DistanceFilter
+                                distance={distance}
+                                onDistanceChange={setDistance}
+                                disabled={!location.lat}
+                            />
+                        </div>
+
+                        {/* View Toggle */}
+                        <div className="flex items-center bg-white/5 rounded-full p-1 border border-white/10">
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 rounded-full transition-all ${viewMode === 'list' ? 'bg-velo-violet text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            >
+                                <LayoutGrid size={18} />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('map')}
+                                className={`p-2 rounded-full transition-all ${viewMode === 'map' ? 'bg-velo-violet text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            >
+                                <MapIcon size={18} />
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Categories */}
-                    <div className="flex gap-2 flex-wrap">
-                        {categories.map((cat) => (
+                    {/* Category Tabs */}
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        {categories.map((category) => (
                             <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === cat
-                                    ? 'text-white'
-                                    : 'bg-white/[0.04] text-velo-text-secondary hover:bg-white/[0.08] hover:text-white border border-white/[0.06]'
+                                key={category}
+                                onClick={() => setActiveCategory(category)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${activeCategory === category
+                                    ? 'bg-white text-black border-white'
+                                    : 'bg-transparent text-white/60 border-white/10 hover:border-white/30 hover:text-white'
                                     }`}
                             >
-                                {activeCategory === cat && (
-                                    <motion.div
-                                        layoutId="activeCategory"
-                                        className="absolute inset-0 bg-velo-violet rounded-full shadow-lg shadow-velo-violet/25"
-                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
-                                    />
-                                )}
-                                <span className="relative z-10">{cat}</span>
+                                {category}
                             </button>
                         ))}
                     </div>
                 </motion.div>
-
                 {/* Results count */}
                 <motion.p
                     initial={{ opacity: 0 }}
@@ -269,7 +267,7 @@ export default function EventsPage() {
                 </motion.p>
             </div>
 
-            {/* Events Grid */}
+            {/* Events Grid or Map */}
             <div className="max-w-7xl mx-auto px-6 md:px-12 relative">
                 {/* Themed ambient glow */}
                 <div
@@ -277,37 +275,68 @@ export default function EventsPage() {
                     style={{ background: theme.gradient }}
                 />
                 <AnimatePresence mode="wait">
-                    {filteredEvents.length === 0 ? (
+                    {isLoadingEvents ? (
                         <motion.div
-                            key="empty"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="text-center py-20"
-                        >
-                            <Sparkles className="w-12 h-12 text-velo-text-muted mx-auto mb-4" />
-                            <p className="text-velo-text-muted text-lg mb-2">No events found</p>
-                            <p className="text-velo-text-muted text-sm">Try adjusting your search or filters.</p>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key={activeCategory + searchQuery}
+                            key="loading"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                         >
-                            {filteredEvents.map((event, i) => (
-                                <Reveal key={event.id} delay={i * 0.04}>
-                                    <EventCard
-                                        event={event}
-                                        mockCurrentDate={mockDate}
-                                    />
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="h-[400px] rounded-2xl bg-white/5 animate-pulse" />
+                            ))}
+                        </motion.div>
+                    ) : viewMode === 'map' ? (
+                        <motion.div
+                            key="map"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <MapView
+                                events={filteredEvents}
+                                center={location.lat && location.lng ? { lat: location.lat, lng: location.lng } : undefined}
+                                zoom={location.lat ? 12 : 10}
+                            />
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="grid"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        >
+                            {filteredEvents.map((event, index) => (
+                                <Reveal key={event.id} delay={index * 0.1}>
+                                    <EventCard event={event} mockCurrentDate={mockDate} />
                                 </Reveal>
                             ))}
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {!isLoadingEvents && filteredEvents.length === 0 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-20"
+                    >
+                        <p className="text-xl text-white/60">No events found matching your criteria.</p>
+                        <button
+                            onClick={() => {
+                                setActiveCategory('All');
+                                setSearchQuery('');
+                                setDistance(50);
+                            }}
+                            className="mt-4 text-velo-cyan hover:underline"
+                        >
+                            Clear filters
+                        </button>
+                    </motion.div>
+                )}
             </div>
         </div>
     );
