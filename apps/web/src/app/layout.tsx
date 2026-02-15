@@ -28,6 +28,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import WaitlistNotification from '../components/WaitlistNotification';
 
+import ParticleBackground from '../components/visuals/ParticleBackground';
+import AuroraBackground from '../components/visuals/AuroraBackground';
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ClientProviders from '../components/ClientProviders';
 
@@ -45,6 +47,8 @@ export default function RootLayout({
                 <QuestProvider>
                     <BookingProvider>
                         <ClientProviders>
+                            <ParticleBackground />
+                            <AuroraBackground />
                             <OnlineStatus />
                             <Navbar />
                             <VeloAgentPanel />
