@@ -7,7 +7,7 @@ export interface UserProfile {
     email: string | null;
     full_name: string | null;
     avatar_url: string | null;
-    role: 'user' | 'admin';
+    role: 'user' | 'admin' | 'organizer';
     member_since: string | null;
 }
 
