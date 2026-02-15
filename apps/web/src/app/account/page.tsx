@@ -34,7 +34,7 @@ export default function AccountPage() {
                 return (
                     <div className="space-y-8">
                         <div>
-                            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {profile?.name?.split(' ')[0] || 'User'}</h2>
+                            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {profile?.full_name?.split(' ')[0] || 'User'}</h2>
                             <p className="text-white/60">Here is what's happening with your Velo account.</p>
                         </div>
 

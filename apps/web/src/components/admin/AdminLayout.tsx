@@ -61,10 +61,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="p-4 border-t border-white/10">
                     <div className="flex items-center gap-3 px-4 py-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center text-xs font-bold font-mono">
-                            {profile?.name?.charAt(0) || 'A'}
+                            {profile?.full_name?.charAt(0) || 'A'}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{profile?.name || 'Admin'}</p>
+                            <p className="text-sm font-medium truncate">{profile?.full_name || 'Admin'}</p>
                             <p className="text-xs text-velo-text-muted truncate">{profile?.email}</p>
                         </div>
                         <button
