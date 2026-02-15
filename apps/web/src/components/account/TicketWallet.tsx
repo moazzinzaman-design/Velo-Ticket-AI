@@ -6,6 +6,7 @@ import { QrCode, MapPin, Calendar, Download, Mail, Smartphone, X, Check } from '
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EmailService } from '../../lib/email/EmailService';
+import Image from 'next/image';
 
 export default function TicketWallet() {
     const { tickets, profile } = useUser();
@@ -59,10 +60,12 @@ export default function TicketWallet() {
                                 </div>
                             </div>
 
-                            <img
+                            <Image
                                 src={ticket.eventImage}
                                 alt={ticket.eventTitle}
-                                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
                         </HolographicCard>

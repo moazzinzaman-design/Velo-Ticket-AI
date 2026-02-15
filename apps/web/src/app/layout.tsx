@@ -34,6 +34,7 @@ import AuroraBackground from '../components/visuals/AuroraBackground';
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ClientProviders from '../components/ClientProviders';
 import PaymentSuccessHandler from '../components/PaymentSuccessHandler';
+import CookieConsent from '../components/legal/CookieConsent';
 
 export default function RootLayout({
     children,
@@ -57,6 +58,7 @@ export default function RootLayout({
                             <WaitlistNotification />
                             <BookingOrchestrator />
                             <PaymentSuccessHandler />
+                            <CookieConsent />
                             <CommandMenu />
                             <main className="min-h-screen">
                                 {children}

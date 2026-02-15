@@ -5,6 +5,7 @@ import PromoterLayout from '../../components/promoter/PromoterLayout';
 import { ArrowUpRight, Ticket, Users, DollarSign, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useEvents } from '../../hooks/useEvents';
 
 // Mock data for dashboard
 const metrics = [
@@ -21,6 +22,8 @@ const recentEvents = [
 ];
 
 export default function PromoterDashboard() {
+    const { events, loading } = useEvents();
+
     return (
         <PromoterLayout>
             <div className="mb-8 flex justify-between items-end">
@@ -59,6 +62,7 @@ export default function PromoterDashboard() {
             </div>
 
             {/* Recent Events Table */}
+            {/* Recent Events Table */}
             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
                     <h3 className="font-semibold text-lg">Recent Events</h3>
@@ -77,31 +81,37 @@ export default function PromoterDashboard() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {recentEvents.map((event) => (
-                                <tr key={event.id} className="hover:bg-white/[0.02] transition-colors">
-                                    <td className="px-6 py-4 font-medium">{event.name}</td>
-                                    <td className="px-6 py-4 text-white/60">{event.date}</td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${event.status === 'Live' ? 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20' :
-                                                event.status === 'Sold Out' ? 'bg-velo-purple/10 text-velo-purple border-velo-purple/20' :
+                            {loading ? (
+                                <tr><td colSpan={4} className="px-6 py-8 text-center text-white/40">Loading events...</td></tr>
+                            ) : events.length === 0 ? (
+                                <tr><td colSpan={4} className="px-6 py-8 text-center text-white/40">No events found. Create your first one!</td></tr>
+                            ) : (
+                                events.map((event) => (
+                                    <tr key={event.id} className="hover:bg-white/[0.02] transition-colors">
+                                        <td className="px-6 py-4 font-medium">{event.title}</td>
+                                        <td className="px-6 py-4 text-white/60">{event.date}</td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${event.status === 'live' ? 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20' :
+                                                event.status === 'sold_out' ? 'bg-velo-purple/10 text-velo-purple border-velo-purple/20' :
                                                     'bg-white/5 text-white/40 border-white/10'
-                                            }`}>
-                                            {event.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <span className="text-sm text-white/60">{event.sales}%</span>
-                                            <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-gradient-to-r from-velo-cyan to-blue-500 rounded-full"
-                                                    style={{ width: `${event.sales}%` }}
-                                                />
+                                                }`}>
+                                                {event.status === 'live' ? 'Live' : event.status === 'sold_out' ? 'Sold Out' : 'Draft'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-3">
+                                                <span className="text-sm text-white/60">{event.soldPercentage || 0}%</span>
+                                                <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-velo-cyan to-blue-500 rounded-full"
+                                                        style={{ width: `${event.soldPercentage || 0}%` }}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
