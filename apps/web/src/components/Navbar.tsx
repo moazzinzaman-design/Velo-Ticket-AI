@@ -14,11 +14,8 @@ import { useUser } from '../hooks/useUser';
 
 const mainLinks = [
     { label: 'Events', href: '/events' },
-    { label: 'Events', href: '/events' },
     { label: 'My Velo', href: '/account' },
     { label: 'Velo+', href: '/plus' },
-    { label: 'Velo+', href: '/plus' },
-
 ];
 
 const featureDropdown = [
