@@ -1,11 +1,23 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+let openaiInstance: OpenAI | null = null;
+
+function getOpenAI() {
+    if (!process.env.OPENAI_API_KEY) {
+        return null;
+    }
+    if (!openaiInstance) {
+        openaiInstance = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    return openaiInstance;
+}
 
 export async function scanContent(text: string): Promise<{ flagged: boolean; reason?: string }> {
-    if (!process.env.OPENAI_API_KEY) {
+    const openai = getOpenAI();
+
+    if (!openai) {
         console.warn('OPENAI_API_KEY not set. Skipping moderation.');
         return { flagged: false };
     }
