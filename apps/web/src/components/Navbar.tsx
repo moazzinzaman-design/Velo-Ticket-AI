@@ -14,9 +14,9 @@ import { useUser } from '../hooks/useUser';
 
 const mainLinks = [
     { label: 'Events', href: '/events' },
-    { label: 'My Tickets', href: '/tickets' },
+    { label: 'My Tickets', href: '/account' },
     { label: 'Velo+', href: '/plus' },
-    { label: 'Dashboard', href: '/dashboard' },
+
 ];
 
 const featureDropdown = [
@@ -164,8 +164,8 @@ export default function Navbar() {
                                                     href={item.href}
                                                     onClick={() => setFeaturesOpen(false)}
                                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${pathname === item.href
-                                                            ? 'bg-white/[0.06]'
-                                                            : 'hover:bg-white/[0.04]'
+                                                        ? 'bg-white/[0.06]'
+                                                        : 'hover:bg-white/[0.04]'
                                                         }`}
                                                 >
                                                     <div className={`w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center ${item.color} group-hover:bg-white/[0.08] transition-colors`}>
@@ -203,11 +203,13 @@ export default function Navbar() {
                         </div>
                     </button>
 
-                    {/* Notification Bell */}
-                    <button className="hidden md:flex relative w-9 h-9 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.06] items-center justify-center text-white/40 hover:text-white transition-all duration-300">
-                        <Bell size={16} />
-                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-velo-rose border-2 border-black animate-pulse" />
-                    </button>
+                    {/* Account */}
+                    <Link
+                        href="/account"
+                        className="hidden md:flex relative w-9 h-9 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.06] items-center justify-center text-white/40 hover:text-white transition-all duration-300 group"
+                    >
+                        <User size={16} />
+                    </Link>
 
                     {/* CTA */}
                     <Link
@@ -269,8 +271,8 @@ export default function Navbar() {
                                         href={item.href}
                                         onClick={() => setMobileOpen(false)}
                                         className={`flex items-center gap-3 py-3 px-4 rounded-xl transition-all ${pathname === item.href
-                                                ? 'text-white bg-white/[0.06]'
-                                                : 'text-white/50 hover:text-white hover:bg-white/[0.03]'
+                                            ? 'text-white bg-white/[0.06]'
+                                            : 'text-white/50 hover:text-white hover:bg-white/[0.03]'
                                             }`}
                                     >
                                         <item.icon size={18} className={item.color} />
