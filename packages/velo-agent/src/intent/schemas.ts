@@ -52,7 +52,6 @@ export const UserIntentSchema = z.discriminatedUnion('type', [
     RideRequestSchema,
     SearchEventsSchema,
     TicketPurchaseSchema,
-    TicketPurchaseSchema,
     DiningReservationSchema,
     UnknownIntentSchema,
     SecurityUpgradeSchema,
