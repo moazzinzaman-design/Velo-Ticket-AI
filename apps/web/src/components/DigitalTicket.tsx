@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wifi, Share2, Info } from 'lucide-react';
+import { Wifi, Share2, Info, DollarSign } from 'lucide-react';
 import type { Ticket } from '../types/ticket';
 import ResaleModal from './ResaleModal';
 import GuaranteedBadge, { AuthenticityModal } from './GuaranteedBadge';
@@ -26,6 +26,41 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
     const [showPriceProtection, setShowPriceProtection] = useState(false);
     const { formatPrice } = useCurrency();
 
+    const getTierStyle = (tier?: string) => {
+        switch (tier) {
+            case 'platinum':
+                return {
+                    bg: 'bg-gradient-to-br from-slate-300 via-white to-slate-400 text-black',
+                    border: 'border-white/50 shadow-[0_0_30px_rgba(255,255,255,0.3)]',
+                    accent: 'bg-black/10',
+                    label: 'PLATINUM'
+                };
+            case 'vip':
+                return {
+                    bg: 'bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 text-white',
+                    border: 'border-yellow-400/50 shadow-[0_0_30px_rgba(234,179,8,0.3)]',
+                    accent: 'bg-black/20',
+                    label: 'VIP'
+                };
+            case 'early-access':
+                return {
+                    bg: 'bg-gradient-to-br from-emerald-600 to-teal-800 text-white',
+                    border: 'border-emerald-400/50',
+                    accent: 'bg-black/20',
+                    label: 'EARLY BIRD'
+                };
+            default:
+                return {
+                    bg: 'bg-gradient-to-br from-velo-violet to-velo-indigo text-white',
+                    border: 'border-white/10',
+                    accent: 'bg-white/10',
+                    label: null
+                };
+        }
+    };
+
+    const style = getTierStyle(ticket.tier);
+
     // Simulate rotating QR code for security
     useEffect(() => {
         const interval = setInterval(() => {
@@ -44,15 +79,21 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                 onClick={() => setShowBack(!showBack)}
             >
                 {/* Front Side */}
-                <div className="absolute inset-0 backface-hidden bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                <div className={`absolute inset-0 backface-hidden bg-black rounded-3xl overflow-hidden shadow-2xl border ${style.border}`}>
                     {/* Holographic Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent bg-[length:200%_200%] animate-shimmer pointer-events-none z-10" />
 
                     {/* Header Image */}
-                    <div className="h-1/3 bg-gradient-to-br from-velo-violet to-velo-indigo relative p-6 flex flex-col justify-end">
-                        <div className="absolute top-4 right-4 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <Info size={16} className="text-white" />
+                    <div className={`h-1/3 ${style.bg} relative p-6 flex flex-col justify-end`}>
+                        <div className={`absolute top-4 right-4 w-8 h-8 ${style.accent} rounded-full flex items-center justify-center backdrop-blur-sm`}>
+                            <Info size={16} className="currentColor" />
                         </div>
+
+                        {style.label && (
+                            <div className="absolute top-4 right-16 px-3 py-1 bg-black/20 backdrop-blur-md rounded-full border border-white/20 text-[10px] font-bold tracking-widest text-white">
+                                {style.label}
+                            </div>
+                        )}
 
                         <div className="absolute top-4 left-4 z-30 flex flex-col gap-2">
                             {ticket.isVerified && (
@@ -147,6 +188,20 @@ export default function DigitalTicket({ ticket, onClose, onListForResale }: Digi
                             {nfcMode ? 'Show QR Code' : 'Switch to NFC Mode'}
                             <Wifi size={16} className={nfcMode ? 'text-blue-400' : 'text-gray-400'} />
                         </button>
+
+                        {/* Quick Sell Button - Front Face */}
+                        {ticket.isResalable !== false && ticket.status !== 'listed' && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowResaleModal(true);
+                                }}
+                                className="mt-2 w-full py-3 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 hover:from-emerald-600/30 hover:to-teal-600/30 border border-emerald-500/20 rounded-xl text-sm font-semibold text-emerald-400 transition-all flex items-center justify-center gap-2 group/sell"
+                            >
+                                <DollarSign size={16} className="group-hover/sell:scale-110 transition-transform" />
+                                Sell on Exchange
+                            </button>
+                        )}
                     </div>
                 </div>
 

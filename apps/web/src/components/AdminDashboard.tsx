@@ -58,7 +58,7 @@ export default function AdminDashboard() {
             <div className="p-4 border-b border-white/10 flex justify-between items-center bg-gray-900/50">
                 <div className="flex items-center gap-2">
                     <Activity className="text-blue-500" size={18} />
-                    <h2 className="text-white font-bold text-sm tracking-wider">VELO ENTEPRISE • <span className="text-gray-400">VENUE OPS</span></h2>
+                    <h2 className="text-white font-bold text-sm tracking-wider">VELO ENTEPRISE • <span className="text-velo-cyan">FLIGHT DECK</span></h2>
                 </div>
                 <div className="flex gap-2">
                     <button

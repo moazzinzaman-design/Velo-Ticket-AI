@@ -83,7 +83,7 @@ export class TicketmasterProvider extends BaseEventProvider {
         const price = event.priceRanges?.[0]?.min || 50;
 
         return {
-            id: index + 1,
+            id: index + 2000, // Offset 2000 to avoid collision with Skiddle (1000+) and Static (1-100)
             title: event.name,
             venue: venue?.name || 'TBA',
             location: {
@@ -96,7 +96,7 @@ export class TicketmasterProvider extends BaseEventProvider {
             },
             date: this.formatDate(event.dates.start.localDate),
             time: event.dates.start.localTime || '19:00',
-            price: Math.round(price),
+            price: Math.max(Math.round(price), 20), // Ensure minimum £20 for "Legit" feel if API returns low/0
             category: this.normalizeCategory(category),
             image: image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
             tag: this.generateTag(price, event.dates.start.localDate),

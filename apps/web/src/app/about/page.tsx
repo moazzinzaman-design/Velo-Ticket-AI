@@ -113,6 +113,38 @@ export default function AboutPage() {
 
 
 
+
+            {/* Leadership */}
+            <section className="section-padding relative overflow-hidden mb-24">
+                <div className="max-w-7xl mx-auto px-6 md:px-12">
+                    <Reveal>
+                        <h2 className="text-3xl font-bold text-white mb-12 text-center">Meet the Founder</h2>
+                    </Reveal>
+
+                    <Reveal delay={0.2}>
+                        <div className="glass-card rounded-3xl p-8 md:p-12 max-w-4xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+                            <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 rounded-full bg-gradient-to-br from-velo-violet via-velo-indigo to-velo-cyan p-1">
+                                <div className="w-full h-full rounded-full bg-black overflow-hidden relative">
+                                    <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white">MZ</div>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 text-center md:text-left">
+                                <h3 className="text-2xl font-bold text-white mb-2">Moazzin Zaman</h3>
+                                <p className="text-velo-violet font-medium mb-4">Founder & CEO</p>
+                                <p className="text-velo-text-secondary leading-relaxed mb-6">
+                                    "As a Data Analyst and Student Pilot, I've always been obsessed with systems that require absolute precision and clarity. Velo applies that same rigor to live events—eliminating chaos, ensuring fairness, and putting fans back in control."
+                                </p>
+                                <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                                    <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-white/70">West Yorkshire, UK</span>
+                                    <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-white/70">Aviation & Data Science</span>
+                                </div>
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
+            </section>
+
             {/* CTA */}
             <section className="max-w-4xl mx-auto px-6 md:px-12">
                 <Reveal>

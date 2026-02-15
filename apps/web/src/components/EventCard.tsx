@@ -3,7 +3,7 @@
 import { useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { MapPin, Calendar, Clock, Lock } from 'lucide-react';
+import { MapPin, Calendar, Clock, Lock, ShoppingBag } from 'lucide-react';
 import { veloBus } from '../lib/veloBus';
 import WaitlistButton from './WaitlistButton';
 import { useDynamicPricing } from '../hooks/useDynamicPricing';
@@ -22,6 +22,8 @@ interface Event {
     image: string;
     tag: string;
     soldPercentage: number;
+    hasMerch?: boolean;
+    merchItems?: string[];
 }
 
 const tagColors: Record<string, string> = {
@@ -34,6 +36,7 @@ const tagColors: Record<string, string> = {
     'PREMIUM': 'bg-indigo-500',
     'POPULAR': 'bg-blue-500',
     'SOLD OUT': 'bg-zinc-600',
+    'MERCH AVAILABLE': 'bg-pink-500',
 };
 
 interface EventCardProps {
@@ -116,6 +119,18 @@ export default function EventCard({ event, mockCurrentDate }: EventCardProps) {
 
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+                    {/* Merch Badge - independent from main tag */}
+                    {event.hasMerch && (
+                        <div className="mb-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 backdrop-blur-sm text-[10px] font-bold text-pink-300 uppercase tracking-wider">
+                            <ShoppingBag size={11} />
+                            <span>Merch Available</span>
+                            {event.merchItems && (
+                                <span className="ml-1 w-4 h-4 rounded-full bg-pink-500/40 flex items-center justify-center text-[9px] text-white">
+                                    {event.merchItems.length}
+                                </span>
+                            )}
+                        </div>
+                    )}
                     <h3 className="text-xl font-bold text-white mb-1.5 group-hover:translate-y-[-3px] transition-transform duration-500 group-hover:holographic-text">
                         {event.title}
                     </h3>

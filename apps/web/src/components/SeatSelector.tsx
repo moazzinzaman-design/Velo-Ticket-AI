@@ -15,7 +15,7 @@ interface SeatSelectorProps {
     eventTitle: string;
     basePrice: number;
     onClose: () => void;
-    onConfirm: (seatIds: string[], totalPrice: number) => void;
+    onConfirm: (seatIds: string[], totalPrice: number, addOns?: Record<string, number>) => void;
 }
 
 import UpgradeModal from './UpgradeModal';
@@ -47,9 +47,7 @@ export default function SeatSelector({ venue, eventTitle, basePrice, onClose, on
 
     const handleFinalConfirm = (finalPrice: number, addOns: Record<string, number>) => {
         const seatIds = selectedSeats.map(s => s.id);
-        // Note: In a real app we would pass the addOns object up too.
-        // For now, we just pass the updated total price to capture the revenue boost.
-        onConfirm(seatIds, finalPrice);
+        onConfirm(seatIds, finalPrice, addOns);
     };
 
     const handleSplitPayment = () => {

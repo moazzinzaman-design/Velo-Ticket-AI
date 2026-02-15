@@ -29,6 +29,7 @@ const featureLinks = [
 
 const companyLinks = [
     { label: 'About', href: '/about' },
+    { label: 'For Promoters', href: '/promoter' },
     { label: 'Careers', href: '#' },
     { label: 'Blog', href: '#' },
     { label: 'Press Kit', href: '#' },
@@ -118,6 +119,29 @@ export default function Footer() {
                                 </div>
                             )}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ─── Promoter CTA ─── */}
+            <div className="border-b border-white/[0.04]">
+                <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl bg-gradient-to-r from-velo-violet/10 via-velo-indigo/5 to-transparent border border-velo-violet/10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-velo-violet to-velo-indigo flex items-center justify-center shrink-0">
+                                <BarChart3 className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Are you an event promoter?</h3>
+                                <p className="text-sm text-white/40">Sell tickets, track analytics, and grow your audience with Velo&apos;s promoter tools.</p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/promoter"
+                            className="shrink-0 px-6 py-3 rounded-xl bg-gradient-to-r from-velo-violet to-velo-indigo text-white font-semibold text-sm hover:shadow-lg hover:shadow-velo-violet/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+                        >
+                            Launch Promoter Hub <ArrowRight size={16} />
+                        </Link>
                     </div>
                 </div>
             </div>

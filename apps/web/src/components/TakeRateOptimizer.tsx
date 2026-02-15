@@ -26,11 +26,12 @@ export default function TakeRateOptimizer() {
         <div className="bg-gray-900/50 rounded-xl p-4 border border-white/10 backdrop-blur-md mt-4">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <TrendingUp className="text-purple-400" size={16} />
-                    <h3 className="text-white text-xs font-bold uppercase tracking-wider">Dynamic Take-Rate Engine</h3>
+                    <TrendingUp className="text-velo-cyan" size={16} />
+                    <h3 className="text-white text-xs font-bold uppercase tracking-wider">Autopilot Revenue Engine</h3>
                 </div>
-                <div className="text-[10px] text-gray-400 font-mono">
-                    Algo: v3.2 (Velocity-Based)
+                <div className="text-[10px] text-velo-text-secondary font-mono flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    Algo: v4.0 (Flight Control)
                 </div>
             </div>
 

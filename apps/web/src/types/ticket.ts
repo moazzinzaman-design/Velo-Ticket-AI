@@ -23,6 +23,7 @@ export interface Ticket {
     originalIssuer?: string;
     isPriceProtected?: boolean;
     purchasePrice?: number;
+    tier?: 'standard' | 'early-access' | 'vip' | 'platinum'; // For dynamic art
 }
 
 export interface TicketGroup {

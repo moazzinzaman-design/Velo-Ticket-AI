@@ -18,6 +18,8 @@ export interface RealEvent {
     tag: string;
     soldPercentage: number;
     description?: string;
+    hasMerch?: boolean;
+    merchItems?: string[];
 }
 
 export const realEvents: RealEvent[] = [
@@ -37,7 +39,9 @@ export const realEvents: RealEvent[] = [
         image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800",
         tag: "SELLING FAST",
         soldPercentage: 78,
-        description: "Experience Coldplay's spectacular world tour"
+        description: "Experience Coldplay's spectacular world tour",
+        hasMerch: true,
+        merchItems: ['Tour T-Shirt', 'Limited Vinyl', 'LED Wristband']
     },
     {
         id: 2,
@@ -53,8 +57,10 @@ export const realEvents: RealEvent[] = [
         price: 85,
         category: "Concert",
         image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
-        tag: "POPULAR",
-        soldPercentage: 65
+        tag: "MERCH AVAILABLE",
+        soldPercentage: 65,
+        hasMerch: true,
+        merchItems: ['Tour Hoodie', 'Signed Poster']
     },
     {
         id: 3,
@@ -104,8 +110,10 @@ export const realEvents: RealEvent[] = [
         price: 78,
         category: "Concert",
         image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800",
-        tag: "VIP AVAILABLE",
-        soldPercentage: 71
+        tag: "MERCH AVAILABLE",
+        soldPercentage: 71,
+        hasMerch: true,
+        merchItems: ['Tour T-Shirt', 'Tote Bag', 'Phone Case']
     },
     {
         id: 6,
@@ -139,7 +147,9 @@ export const realEvents: RealEvent[] = [
         category: "Concert",
         image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800",
         tag: "LIMITED",
-        soldPercentage: 95
+        soldPercentage: 95,
+        hasMerch: true,
+        merchItems: ['Love On Tour Hoodie', 'Pleasing Merch']
     },
     {
         id: 8,
@@ -190,7 +200,9 @@ export const realEvents: RealEvent[] = [
         category: "Concert",
         image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
         tag: "SELLING FAST",
-        soldPercentage: 82
+        soldPercentage: 82,
+        hasMerch: true,
+        merchItems: ['Renaissance Tour Cap', 'Collector Box Set']
     }
 ];
 

@@ -4,7 +4,7 @@ import { createClient } from '../../../lib/supabase/server';
 import { scanContent } from '../../../lib/moderation/scanner';
 import type { RealEvent } from '../../../data/realEvents';
 
-const CACHE_DURATION_MINUTES = 15;
+const CACHE_DURATION_MINUTES = 1;
 
 export async function POST(req: NextRequest) {
     const supabase = await createClient();

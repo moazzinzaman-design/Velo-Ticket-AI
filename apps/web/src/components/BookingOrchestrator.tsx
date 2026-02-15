@@ -4,16 +4,21 @@ import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import SeatSelector from './SeatSelector';
-import { venues } from '../data/venueData'; // Using mock venue data for now
+import { findBestVenue } from '../data/venueData';
 import { EmailService } from '../lib/email/EmailService';
+import { useUser } from '../hooks/useUser';
 
 export default function BookingOrchestrator() {
     const { isBookingOpen, selectedEvent, closeBooking } = useBooking();
+    const { profile } = useUser();
     const [isProcessing, setIsProcessing] = React.useState(false);
 
-    // In a real app, we would fetch the venue layout based on selectedEvent.venue
-    // For this prototype, we'll use the default mock venue.
-    const venue = venues[0];
+    // Match event venue to the best available venue layout
+    const venue = React.useMemo(() => {
+        if (!selectedEvent) return null;
+        return findBestVenue(selectedEvent.venue);
+    }, [selectedEvent]);
+
     const [dynamicPrice, setDynamicPrice] = React.useState<number | null>(null);
 
     React.useEffect(() => {
@@ -25,16 +30,21 @@ export default function BookingOrchestrator() {
         }
     }, [selectedEvent]);
 
-    const handleCheckout = async (seatIds: string[], total: number) => {
+    const handleCheckout = async (seatIds: string[], total: number, addOns?: Record<string, number>) => {
         if (!selectedEvent) return;
         setIsProcessing(true);
 
-        // Track booking confirmation email trigger (mock)
-        EmailService.sendBookingConfirmation(
-            'user@example.com', // In a real app, this comes from useUser()
-            selectedEvent.title,
-            `VELO-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
-        );
+        // Use real user email from auth, fall back to empty string
+        const userEmail = profile.email || '';
+
+        // Send booking confirmation email to the actual user
+        if (userEmail) {
+            EmailService.sendBookingConfirmation(
+                userEmail,
+                selectedEvent.title,
+                `VELO-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+            );
+        }
 
         try {
             const response = await fetch('/api/checkout_session', {
@@ -46,6 +56,9 @@ export default function BookingOrchestrator() {
                     price: selectedEvent.price,
                     title: selectedEvent.title,
                     quantity: seatIds.length,
+                    addOns,
+                    customerEmail: userEmail, // Pre-fill Stripe checkout email
+                    userId: profile.id, // Pass user ID for webhook fulfillment
                 }),
             });
 
@@ -67,7 +80,7 @@ export default function BookingOrchestrator() {
 
     return (
         <AnimatePresence>
-            {isBookingOpen && selectedEvent && (
+            {isBookingOpen && selectedEvent && venue && (
                 <SeatSelector
                     venue={venue}
                     eventTitle={selectedEvent.title}
@@ -79,3 +92,4 @@ export default function BookingOrchestrator() {
         </AnimatePresence>
     );
 }
+

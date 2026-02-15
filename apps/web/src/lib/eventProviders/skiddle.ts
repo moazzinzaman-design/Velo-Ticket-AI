@@ -129,10 +129,18 @@ export class SkiddleProvider extends BaseEventProvider {
 
     private parsePrice(priceStr: string): number {
         // Skiddle prices can be "£15", "Free", "£10 - £25"
-        if (!priceStr || priceStr.toLowerCase() === 'free') return 0;
+        if (!priceStr) return 25; // Default if missing
 
-        const match = priceStr.match(/£?(\d+(?:\.\d{2})?)/);
-        return match ? parseFloat(match[1]) : 25;
+        const lower = priceStr.toLowerCase();
+        if (lower.includes('free') || lower.includes('complimentary')) return 0;
+
+        const match = priceStr.match(/(\d+(?:\.\d{2})?)/);
+        if (match) {
+            const val = parseFloat(match[1]);
+            // If parsed as 0 but not marked free, assume data error and set default
+            return val > 0 ? val : 20;
+        }
+        return 25; // Fallback
     }
 
     private formatDate(isoDate: string): string {

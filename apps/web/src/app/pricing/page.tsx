@@ -91,10 +91,10 @@ const PLANS = [
 ];
 
 const TRUST_STATS = [
-    { label: 'Events Powered', value: '12,400+', icon: Ticket },
-    { label: 'Happy Customers', value: '2.1M+', icon: Users },
-    { label: 'Countries', value: '34', icon: Globe },
-    { label: 'Uptime', value: '99.97%', icon: Shield },
+    { label: 'Live Events', value: '500+', icon: Ticket },
+    { label: 'Verified Tickets', value: '100%', icon: Shield },
+    { label: 'UK & EU Coverage', value: '2 Regions', icon: Globe },
+    { label: 'Uptime SLA', value: '99.9%', icon: Users },
 ];
 
 export default function PricingPage() {

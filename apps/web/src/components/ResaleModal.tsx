@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BadgeCheck, Info, X, DollarSign, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { BadgeCheck, Info, X, DollarSign, ArrowRight, ShieldCheck, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
 import type { Ticket } from '../types/ticket';
 import HapticButton from './HapticButton';
 
@@ -72,6 +72,46 @@ export default function ResaleModal({ ticket, onClose, onConfirmSearch }: Resale
                                     <h4 className="font-bold text-white text-sm">{ticket.eventName}</h4>
                                     <p className="text-xs text-velo-text-muted">{ticket.seat}</p>
                                 </div>
+                            </div>
+
+                            {/* Market Price Indicator */}
+                            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/5 to-violet-500/5 border border-blue-500/10 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                                        <TrendingUp size={12} /> Market Insights
+                                    </span>
+                                    <span className="text-[10px] text-white/30">Updated just now</span>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="text-center">
+                                        <p className="text-[10px] text-white/40 mb-0.5">Low</p>
+                                        <p className="text-sm font-bold text-white/60">£{(ticket.price * 0.80).toFixed(0)}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-[10px] text-emerald-400 mb-0.5">Avg Market</p>
+                                        <p className="text-sm font-bold text-emerald-400">£{(ticket.price * 0.95).toFixed(0)}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-[10px] text-white/40 mb-0.5">High</p>
+                                        <p className="text-sm font-bold text-white/60">£{maxPrice.toFixed(0)}</p>
+                                    </div>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-white/10 overflow-hidden relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-emerald-500 to-amber-500 opacity-30" />
+                                    <div
+                                        className="absolute top-0 h-full w-1 bg-white rounded-full shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                                        style={{ left: `${Math.min(100, Math.max(0, (currentPrice / maxPrice) * 100))}%` }}
+                                    />
+                                </div>
+                                {currentPrice > 0 && currentPrice <= maxPrice && (
+                                    <p className={`text-[11px] flex items-center gap-1 ${currentPrice < ticket.price * 0.95 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                        {currentPrice < ticket.price * 0.95 ? (
+                                            <><TrendingDown size={11} /> Below average — may sell faster</>
+                                        ) : (
+                                            <><TrendingUp size={11} /> Competitive price — good positioning</>
+                                        )}
+                                    </p>
+                                )}
                             </div>
 
                             {/* Price Input */}

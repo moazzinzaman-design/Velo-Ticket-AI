@@ -25,7 +25,8 @@ const MOCK_TICKETS: Ticket[] = [
         maxResalePrice: 256,
         isVerified: true,
         authenticityHash: '0x7f83...9a2b',
-        originalIssuer: 'Velo Protocol'
+        originalIssuer: 'Velo Protocol',
+        tier: 'platinum'
     },
     {
         id: 'TKT-8842-AC',
@@ -51,6 +52,7 @@ const MOCK_TICKETS: Ticket[] = [
         originalIssuer: 'Velo Protocol',
         isPriceProtected: true,
         purchasePrice: 275, // Higher original price to show drop
+        tier: 'vip'
     },
     {
         id: 'TKT-9921-ZA',
@@ -72,7 +74,8 @@ const MOCK_TICKETS: Ticket[] = [
         isResalable: false,
         isVerified: true,
         authenticityHash: '0x1a9b...7c4d',
-        originalIssuer: 'Silverstone Circuit'
+        originalIssuer: 'Silverstone Circuit',
+        tier: 'standard'
     }
 ];
 
