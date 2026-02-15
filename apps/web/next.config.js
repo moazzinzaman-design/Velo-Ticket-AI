@@ -10,11 +10,11 @@ const nextConfig = {
             { protocol: 'https', hostname: 'eocjiduoyhdpcdytpwuk.supabase.co' }
         ]
     },
+    serverExternalPackages: ['@react-pdf/renderer', 'qrcode', 'puppeteer-core', '@sparticuz/chromium'],
     experimental: {
         serverActions: {
             bodySizeLimit: '2mb',
         },
-        serverComponentsExternalPackages: ['@react-pdf/renderer', 'qrcode', 'puppeteer-core', '@sparticuz/chromium']
     }
 };
 

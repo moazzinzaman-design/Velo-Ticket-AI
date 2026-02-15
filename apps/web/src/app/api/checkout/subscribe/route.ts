@@ -4,10 +4,11 @@ import { stripe } from '../../../../lib/stripe-server';
 
 export async function POST(req: Request) {
     try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createClient();
+        const { data, error: authError } = await supabase.auth.getUser();
+        const user = data?.user;
 
-        if (!user) {
+        if (!user || authError) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
