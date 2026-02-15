@@ -308,7 +308,7 @@ export default function VeloAgentPanel() {
                                             <span className="text-xs text-white/50">{event.date}</span>
                                         </div>
                                         <div className="flex justify-between items-center mt-1">
-                                            <span className="text-xs text-white/40">{event.location.venue}</span>
+                                            <span className="text-xs text-white/40">{event.venue}</span>
                                             <span className="text-xs font-bold text-velo-violet">From £{event.price.min}</span>
                                         </div>
                                     </div>
@@ -318,7 +318,7 @@ export default function VeloAgentPanel() {
                     }]);
                 } else if (response.action === 'show_ride_options') {
                     // Call Service
-                    const venue = realEvents.find(e => e.location.venue.includes(response.destination)) || realEvents[0];
+                    const venue = realEvents.find(e => e.venue.includes(response.destination)) || realEvents[0];
                     const estimates = getRideEstimates(latitude || 51.5074, longitude || -0.1278, venue.location); // Default to London if no loc
 
                     setMessages(prev => [...prev, {
