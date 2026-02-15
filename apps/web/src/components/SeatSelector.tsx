@@ -187,11 +187,23 @@ export default function SeatSelector({ venue, eventTitle, basePrice, onClose, on
 
                             {/* Total & confirm */}
                             <div className="border-t border-white/10 pt-6 mt-6 space-y-3">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-velo-text-secondary">Total</span>
-                                    <span className="text-2xl font-bold text-white">
-                                        £{totalPrice.toFixed(2)}
-                                    </span>
+                                {/* Price Breakdown */}
+                                <div className="space-y-2 mb-4">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-velo-text-secondary">Subtotal ({selectedSeats.length} ticket{selectedSeats.length !== 1 ? 's' : ''})</span>
+                                        <span className="text-white">£{totalPrice.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-velo-text-muted">Velo Service Fee</span>
+                                        <span className="text-white/60">£{(totalPrice * 0.10).toFixed(2)}</span>
+                                    </div>
+                                    <div className="w-full h-px bg-white/10" />
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-semibold text-white">Total</span>
+                                        <span className="text-2xl font-bold text-white">
+                                            £{(totalPrice * 1.10).toFixed(2)}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <button

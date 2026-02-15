@@ -33,6 +33,7 @@ import AuroraBackground from '../components/visuals/AuroraBackground';
 import CustomCursor from '../components/visuals/CustomCursor';
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ClientProviders from '../components/ClientProviders';
+import PaymentSuccessHandler from '../components/PaymentSuccessHandler';
 
 export default function RootLayout({
     children,
@@ -56,6 +57,7 @@ export default function RootLayout({
                             <VeloAgentPanel />
                             <WaitlistNotification />
                             <BookingOrchestrator />
+                            <PaymentSuccessHandler />
                             <CommandMenu />
                             <main className="min-h-screen">
                                 {children}
