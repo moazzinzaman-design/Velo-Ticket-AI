@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, DollarSign, Image as ImageIcon, ChevronRight, Check, Award } from 'lucide-react';
-import MagneticButton from '../visuals/MagneticButton';
+
 
 const steps = [
     { number: 1, label: 'Event Details', icon: Calendar },
