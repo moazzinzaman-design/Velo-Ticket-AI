@@ -36,13 +36,13 @@ export async function scanContent(content: string): Promise<{ isSafe: boolean; r
                 .filter(([_, value]) => value)
                 .map(([key]) => key)
                 .join(', ');
-            return { flagged: true, reason: categories };
+            return { isSafe: false, reason: categories };
         }
 
-        return { flagged: false };
+        return { isSafe: true };
     } catch (error) {
         console.error('Moderation API error:', error);
-        // Fail open or closed? Let's fail open for prototype, but log it.
-        return { flagged: false };
+        // Fail open - allow content if moderation fails
+        return { isSafe: true };
     }
 }
