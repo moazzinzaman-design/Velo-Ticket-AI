@@ -41,7 +41,8 @@
             ],
             "outputs": [
                 ".next/**",
-                "!.next/cache/**"
+                "!.next/cache/**",
+                "packages/velo-agent/dist/**"
             ]
         },
         "dev": {

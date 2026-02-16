@@ -15,8 +15,8 @@ fi
 
 # 2. Update Lockfile and Commit
 echo "📦 Updating dependencies..."
-# Remove lockfile to force regeneration if corrupt
-rm -f package-lock.json
+# Lockfile should be preserved
+# rm -f package-lock.json
 npm install
 git add .
 git commit -m "chore: update lockfile for deployment"

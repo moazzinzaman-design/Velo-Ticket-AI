@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 // Hardcoded for prototype simplicity. In production, check database/env.
 const VALID_API_KEYS = new Set(['velo_partner_test_key', 'vp_live_123456789', 'vp_test_987654321']);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     let response = NextResponse.next({
         request: {
             headers: request.headers,
