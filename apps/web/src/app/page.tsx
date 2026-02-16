@@ -7,7 +7,7 @@ import { ArrowRight, Sparkles, Shield, Zap, Globe, Star, Calendar, MapPin, Clock
 import VeloAgentPanel from '../components/VeloAgentPanel';
 import ParticleCanvas from '../components/ParticleCanvas';
 import WaitlistButton from '../components/WaitlistButton';
-import MagneticButton from '../components/visuals/MagneticButton';
+
 import ScrollReveal from '../components/visuals/ScrollReveal';
 import { veloBus } from '../lib/veloBus';
 
