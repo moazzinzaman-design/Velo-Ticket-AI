@@ -7,7 +7,12 @@ import { User, Mail, Bell, Shield, CreditCard } from 'lucide-react';
 export default function SettingsForm() {
     const { profile, updateProfile } = useUser();
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState(profile);
+    const [formData, setFormData] = useState<any>(profile || { full_name: '', email: '' });
+
+    // Update formData when profile loads
+    if (profile && !formData.id) {
+        setFormData(profile);
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,8 +40,8 @@ export default function SettingsForm() {
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                             <input
                                 type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                value={formData?.full_name || ''}
+                                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                                 disabled={!isEditing}
                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-velo-cyan disabled:opacity-50"
                             />
@@ -49,7 +54,7 @@ export default function SettingsForm() {
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                             <input
                                 type="email"
-                                value={formData.email}
+                                value={formData?.email || ''}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 disabled={!isEditing}
                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-velo-cyan disabled:opacity-50"

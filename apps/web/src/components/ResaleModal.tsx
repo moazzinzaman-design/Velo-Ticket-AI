@@ -16,7 +16,7 @@ export default function ResaleModal({ ticket, onClose, onConfirmSearch }: Resale
     const [price, setPrice] = useState<string>(ticket.price.toString());
     const [step, setStep] = useState<'pricing' | 'confirm'>('pricing');
 
-    const maxPrice = ticket.maxResalePrice || ticket.price;
+    const maxPrice = ticket.max_resale_price || ticket.price;
     const currentPrice = parseFloat(price) || 0;
     const isOverCap = currentPrice > maxPrice;
 

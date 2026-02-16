@@ -30,6 +30,7 @@ interface UserState {
     checkSession: () => Promise<void>;
     signOut: () => Promise<void>;
     addTicket: (ticket: Ticket) => void;
+    updateProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
 export const useUser = create<UserState>()(
@@ -97,6 +98,31 @@ export const useUser = create<UserState>()(
                 const supabase = createClient();
                 await supabase.auth.signOut();
                 set({ user: null, profile: null, tickets: [], isAdmin: false, isVeloPlus: false });
+            },
+
+            updateProfile: async (data: Partial<UserProfile>) => {
+                const supabase = createClient();
+                const session = await supabase.auth.getSession();
+                const user = session.data.session?.user;
+
+                if (!user) return;
+
+                const updates = {
+                    id: user.id,
+                    ...data,
+                    updated_at: new Date().toISOString(),
+                };
+
+                const { error } = await supabase.from('profiles').upsert(updates);
+
+                if (error) {
+                    console.error('Error updating profile:', error);
+                    throw error;
+                }
+
+                set((state) => ({
+                    profile: state.profile ? { ...state.profile, ...data } : null
+                }));
             }
         }),
         {
