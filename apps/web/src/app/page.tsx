@@ -312,14 +312,14 @@ export default function Home() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link href="/events">
-                                <MagneticButton className="btn-primary flex items-center gap-2 text-base px-8 py-4">
+                                <button className="btn-primary flex items-center gap-2 text-base px-8 py-4">
                                     <Ticket size={18} /> Explore Events <ArrowRight size={18} />
-                                </MagneticButton>
+                                </button>
                             </Link>
                             <Link href="/features">
-                                <MagneticButton className="btn-outline flex items-center gap-2 text-base px-8 py-4">
+                                <button className="btn-outline flex items-center gap-2 text-base px-8 py-4">
                                     See How It Works
-                                </MagneticButton>
+                                </button>
                             </Link>
                         </div>
 
