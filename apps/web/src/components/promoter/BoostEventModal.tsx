@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Zap, Crown, Search, TrendingUp, Check, ArrowRight } from 'lucide-react';
+import { X, Zap, Crown, Search, TrendingUp, Check, ArrowRight, Users } from 'lucide-react';
 import MagneticButton from '../visuals/MagneticButton';
 
 interface BoostEventModalProps {
@@ -124,8 +124,8 @@ export default function BoostEventModal({ eventTitle, onClose }: BoostEventModal
                                 key={pkg.id}
                                 onClick={() => setSelectedPkg(pkg.id)}
                                 className={`relative p-5 rounded-xl border transition-all duration-300 cursor-pointer ${selectedPkg === pkg.id
-                                        ? `bg-white/10 ${pkg.border} shadow-lg ring-1 ring-white/20`
-                                        : 'bg-white/5 border-white/5 hover:bg-white/[0.08]'
+                                    ? `bg-white/10 ${pkg.border} shadow-lg ring-1 ring-white/20`
+                                    : 'bg-white/5 border-white/5 hover:bg-white/[0.08]'
                                     }`}
                             >
                                 {pkg.popular && (
@@ -176,8 +176,8 @@ export default function BoostEventModal({ eventTitle, onClose }: BoostEventModal
                             onClick={handlePurchase}
                             disabled={!selectedPkg || isProcessing}
                             className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${!selectedPkg
-                                    ? 'bg-white/10 text-white/40 cursor-not-allowed'
-                                    : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/10'
+                                ? 'bg-white/10 text-white/40 cursor-not-allowed'
+                                : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/10'
                                 }`}
                         >
                             {isProcessing ? 'Processing...' : 'Continue to Payment'}
