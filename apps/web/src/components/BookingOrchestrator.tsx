@@ -44,6 +44,28 @@ export default function BookingOrchestrator() {
     const handleCheckout = async (seatIds: string[], total: number, addOns?: Record<string, number>) => {
         if (!selectedEvent) return;
 
+        // CHECK FOR AFFILIATE EVENT - Redirect to partner site
+        if (selectedEvent.purchaseUrl) {
+            // Track the affiliate click
+            const { trackAffiliateClick } = await import('../lib/analytics/affiliateTracking');
+
+            await trackAffiliateClick({
+                eventId: String(selectedEvent.id),
+                eventTitle: selectedEvent.title,
+                platform: selectedEvent.source || 'velo',
+                userId: profile?.id,
+                purchaseUrl: selectedEvent.purchaseUrl
+            });
+
+            // Open partner site in new tab
+            window.open(selectedEvent.purchaseUrl, '_blank');
+
+            // Close booking modal
+            closeBooking();
+            return;
+        }
+
+        // VELO-HOSTED EVENT - Continue with normal checkout
         // Check if user is authenticated
         if (!profile || !profile.email) {
             // Guest checkout - show email modal
