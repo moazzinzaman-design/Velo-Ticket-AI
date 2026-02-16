@@ -1,11 +1,22 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client only if API key is available
+let openai: OpenAI | null = null;
+
+if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+} else {
+    console.warn('OPENAI_API_KEY not set. AI features will use fallback responses.');
+}
 
 export const AIMessageGenerator = {
     async generateTicketHype(eventName: string, userName: string, venueName: string): Promise<string> {
+        if (!openai) {
+            return `Get ready for an unforgettable night at ${venueName}! 🎟️✨`;
+        }
+
         try {
             const response = await openai.chat.completions.create({
                 model: 'gpt-4-turbo-preview',
@@ -35,6 +46,15 @@ export const AIMessageGenerator = {
     },
 
     async generateNearbyInsights(eventName: string, venueName: string, ageRestriction?: string): Promise<Array<{ title: string, description: string, type: 'food' | 'drink' | 'activity' | 'transport' | 'accommodation' }>> {
+        if (!openai) {
+            return [
+                { title: 'Local Station', description: 'Nearest transport hub 5 mins walk.', type: 'transport' },
+                { title: 'The Velo Lounge', description: 'Exclusive pre-show drinks/snacks.', type: 'drink' },
+                { title: 'Quick Bites Co.', description: 'Fast food for a quick energy boost.', type: 'food' },
+                { title: 'City Hotel', description: 'Comfortable stay right next door.', type: 'accommodation' }
+            ];
+        }
+
         try {
             const ageContext = ageRestriction === '18+'
                 ? "The audience is 18+, so bars and nightlife are okay."
@@ -80,6 +100,10 @@ export const AIMessageGenerator = {
     },
 
     async generateEventDescription(title: string, venue: string, date: string): Promise<string> {
+        if (!openai) {
+            return `Experience ${title} live at ${venue}. Join us on ${date} for a spectacular event.`;
+        }
+
         try {
             const response = await openai.chat.completions.create({
                 model: 'gpt-4-turbo-preview',
