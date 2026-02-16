@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
 const nextConfig = {
     reactStrictMode: true,
     transpilePackages: ["@velo/agent", "react-map-gl", "mapbox-gl"],
@@ -15,9 +16,9 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '2mb',
         },
-        turbopack: {
-            root: '../../',
-        },
+    },
+    turbopack: {
+        root: path.join(__dirname, '../../'),
     }
 };
 

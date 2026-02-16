@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "echo 'Skipping tsc build for Vercel'",
+    "build": "mkdir -p dist && touch dist/.keep && echo 'Skipping tsc build for Vercel'",
     "test": "jest"
   },
   "dependencies": {
