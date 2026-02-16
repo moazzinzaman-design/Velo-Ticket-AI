@@ -87,11 +87,11 @@ export async function GET(req: NextRequest) {
         console.error('Events API error:', error);
 
         // Fallback to mock data
-        const { realEvents } = await import('../../../data/realEvents');
+        // Return empty list or error if live fetch fails, no mock fallback
         return NextResponse.json({
-            events: realEvents.slice(0, 20),
-            source: 'fallback',
-            error: 'Failed to fetch live events',
+            events: [],
+            source: 'fallback_error',
+            error: 'Failed to fetch live events and strict mode is enabled.',
         }, { status: 500 });
     }
 }

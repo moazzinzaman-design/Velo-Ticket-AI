@@ -28,7 +28,7 @@ const tagColors: Record<string, string> = {
     'SOLD OUT': 'bg-zinc-600',
 };
 
-import { realEvents as allEvents } from '../../data/realEvents';
+// import { realEvents as allEvents } from '../../data/realEvents'; // Mock data disabled
 
 function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'scale' }) {
     const ref = useRef(null);
@@ -81,24 +81,39 @@ export default function EventsPage() {
         // Simulate network delay for effect
         await new Promise(resolve => setTimeout(resolve, 600));
 
-        // Filter locally based on category and search
-        let filtered = [...allEvents];
-
-        if (activeCategory === 'Verified Resale') {
-            filtered = filtered.filter(e => e.resaleTickets && e.resaleTickets.length > 0);
-        } else if (activeCategory !== 'All') {
-            filtered = filtered.filter(e => e.category === getCategoryFromString(activeCategory));
+        // Check if we have cached events first to avoid flicker if re-visiting
+        if (events.length > 0 && eventsSource === 'live') {
+            setIsLoadingEvents(false);
+            return;
         }
 
-        if (currentCity !== 'All Cities' && currentCity !== 'Near Me') {
-            // Simple city filter if needed, or just return all for demo richness
-            // filtered = filtered.filter(e => e.location.city === currentCity);
-        }
+        try {
+            // Build query params
+            const params = new URLSearchParams();
+            if (activeCategory !== 'All') params.append('category', activeCategory);
+            if (currentCity !== 'All Cities') params.append('city', currentCity);
+            if (location.lat && location.lng) {
+                params.append('lat', location.lat.toString());
+                params.append('lng', location.lng.toString());
+                params.append('radius', distance.toString());
+            }
 
-        setEvents(filtered);
-        setEventsSource('local');
-        setIsLoadingEvents(false);
-    }, [activeCategory, currentCity]);
+            const res = await fetch(`/api/events?${params.toString()}`);
+            const data = await res.json();
+
+            if (data.events && Array.isArray(data.events)) {
+                setEvents(data.events);
+                setEventsSource(data.source || 'live');
+            } else {
+                setEvents([]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch events:', error);
+            setEvents([]);
+        } finally {
+            setIsLoadingEvents(false);
+        }
+    }, [activeCategory, currentCity, location.lat, location.lng, distance]);
 
     // Fetch events on mount and when dependencies change
     useEffect(() => {
@@ -174,7 +189,7 @@ export default function EventsPage() {
 
             {/* Recommended Section */}
             <div className="max-w-7xl mx-auto px-6 md:px-12">
-                <RecommendedEvents allEvents={allEvents} mockDate={mockDate} />
+                <RecommendedEvents allEvents={events} mockDate={mockDate} />
             </div>
 
             {/* Search & Filters */}

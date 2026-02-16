@@ -41,9 +41,8 @@ export class EventAggregator {
 
     async searchEvents(params: EventSearchParams): Promise<RealEvent[]> {
         if (this.providers.length === 0) {
-            // Fallback to existing mock data if no providers configured
-            const { realEvents } = await import('../../data/realEvents');
-            return realEvents.slice(0, params.limit || 20);
+            console.warn('No event provider API keys configured. Returning empty list (Real Data Strict Mode).');
+            return [];
         }
 
         // Fetch from all providers in parallel

@@ -11,9 +11,27 @@ import MagneticButton from '../components/visuals/MagneticButton';
 import ScrollReveal from '../components/visuals/ScrollReveal';
 import { veloBus } from '../lib/veloBus';
 
-import { realEvents } from '../data/realEvents';
+import { RealEvent } from '../data/realEvents';
 /* ─── Featured Events Data ─── */
-const featuredEvents = realEvents.slice(0, 3);
+const useFeaturedEvents = () => {
+    const [events, setEvents] = useState<RealEvent[]>([]);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const res = await fetch('/api/events?limit=3');
+                const data = await res.json();
+                if (data.events && Array.isArray(data.events)) {
+                    setEvents(data.events);
+                }
+            } catch (error) {
+                console.error('Failed to fetch featured events', error);
+            }
+        };
+        fetchEvents();
+    }, []);
+    return events;
+};
 
 /* ─── How It Works Steps ─── */
 const steps = [
@@ -124,7 +142,7 @@ import { useBooking } from '../context/BookingContext';
 import { useRouter } from 'next/navigation';
 
 /* ─── Tilt Event Card ─── */
-function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: number }) {
+function EventCard({ event, index }: { event: RealEvent; index: number }) {
     const { openBooking } = useBooking();
     const router = useRouter(); // Use router
     const cardRef = useRef<HTMLDivElement>(null);
@@ -241,6 +259,7 @@ function EventCard({ event, index }: { event: typeof featuredEvents[0]; index: n
 export default function Home() {
     const [email, setEmail] = useState('');
     const [subscribed, setSubscribed] = useState(false);
+    const featuredEvents = useFeaturedEvents();
 
     return (
         <>
