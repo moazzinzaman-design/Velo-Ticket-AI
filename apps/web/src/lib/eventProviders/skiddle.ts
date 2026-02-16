@@ -17,6 +17,7 @@ interface SkiddleEvent {
     imageurl: string;
     eventcode: string; // LIVE, CLUB, COMEDY, FEST, SPORT
     description: string;
+    link?: string; // Skiddle event page URL
 }
 
 interface SkiddleResponse {
@@ -93,8 +94,14 @@ export class SkiddleProvider extends BaseEventProvider {
     private normalizeEvent(event: SkiddleEvent, index: number): RealEvent {
         const price = this.parsePrice(event.entryprice);
 
+        // Extract Skiddle event URL
+        const purchaseUrl = event.link || `https://www.skiddle.com/whats-on/event/${event.id}`;
+
+        // Add affiliate tracking parameter (will be replaced with actual code from Skiddle)
+        const affiliateUrl = `${purchaseUrl}${purchaseUrl.includes('?') ? '&' : '?'}affiliate=velo`;
+
         return {
-            id: index + 1000, // Offset to avoid ID collision with Ticketmaster
+            id: `skiddle-${event.id}`,
             title: event.eventname,
             venue: event.venue.name,
             location: {
@@ -113,6 +120,10 @@ export class SkiddleProvider extends BaseEventProvider {
             tag: this.generateTag(price, event.date),
             soldPercentage: Math.floor(Math.random() * 40) + 30,
             description: event.description || event.eventname,
+            // Affiliate fields
+            purchaseUrl: affiliateUrl,
+            source: 'skiddle',
+            affiliateTracking: 'velo'
         };
     }
 

@@ -29,6 +29,10 @@ export interface RealEvent {
         price: number;
     }[];
     ageRestriction?: 'All Ages' | '18+' | '16+' | '14+';
+    // Affiliate model fields
+    purchaseUrl?: string; // External partner checkout URL
+    source?: 'skiddle' | 'ticketmaster' | 'seatgeek' | 'velo'; // Event source platform
+    affiliateTracking?: string; // Tracking code for commission attribution
 }
 
 export const realEvents: RealEvent[] = [
@@ -48,9 +52,11 @@ export const realEvents: RealEvent[] = [
         image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2940&auto=format&fit=crop',
         tag: 'TONIGHT',
         tagColor: 'bg-velo-rose',
-        accentColor: 'from-purple-600 to-blue-600',
+        accentColor: 'accent-velo-rose',
+        source: 'velo',
         soldPercentage: 87,
-        description: 'The legendary duo returns for a one-night-only holographic spectacle at The Sphere.',
+        ageRestriction: 'All Ages',
+        description: 'Experience the legend at groundbreaking Sphere venue',
         hasMerch: true,
         merchItems: ['Helmet Replica', 'Limited Edition Vinyl'],
         resaleTickets: [
