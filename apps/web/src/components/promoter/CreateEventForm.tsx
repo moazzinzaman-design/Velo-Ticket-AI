@@ -299,10 +299,10 @@ export default function CreateEventForm() {
                     </button>
 
                     <div onClick={handleNext}>
-                        <MagneticButton className="bg-white text-black font-semibold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors flex items-center gap-2">
+                        <button className="bg-white text-black font-semibold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors flex items-center gap-2">
                             {currentStep === steps.length ? 'Publish Event' : 'Next Step'}
                             <ChevronRight size={18} />
-                        </MagneticButton>
+                        </button>
                     </div>
                 </div>
             </div>
