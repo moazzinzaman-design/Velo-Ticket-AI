@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Crown, Search, TrendingUp, Check, ArrowRight, Users } from 'lucide-react';
-import MagneticButton from '../visuals/MagneticButton';
 
 interface BoostEventModalProps {
     eventTitle: string;
