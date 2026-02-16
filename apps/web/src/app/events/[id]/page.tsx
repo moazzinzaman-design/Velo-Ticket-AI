@@ -8,6 +8,7 @@ import { useBooking } from '../../../context/BookingContext';
 import { realEvents } from '../../../data/realEvents';
 import ParticleCanvas from '../../../components/ParticleCanvas';
 import NearbyActivities from '../../../components/events/NearbyActivities';
+import AIEventDetails from '../../../components/events/AIEventDetails';
 
 // Retrieve event by ID from universal data source
 const getEvent = (id: string) => {
@@ -171,9 +172,12 @@ export default function EventDetailsPage() {
                         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">
                             About the Experience
                         </h2>
-                        <p className="text-xl text-velo-text-secondary leading-relaxed font-light">
-                            {event.description || `Experience ${event.title} live at ${event.venue}. This exclusive event brings together world-class production, immersive visuals, and unforgettable performances.`}
-                        </p>
+                        <AIEventDetails
+                            title={event.title}
+                            venue={event.venue}
+                            date={event.date}
+                            originalDescription={event.description}
+                        />
                     </section>
 
                     {/* Venue Map / Seating Diagram */}
@@ -240,7 +244,7 @@ export default function EventDetailsPage() {
 
                     {/* Nearby Activities */}
                     <div className="p-6 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-md">
-                        <NearbyActivities eventName={event.title} venueName={event.venue} />
+                        <NearbyActivities eventName={event.title} venueName={event.venue} ageRestriction={event.ageRestriction} />
                     </div>
                 </div>
             </div>

@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { MapPin, Coffee, Beer, Navigation, Sparkles, Loader2 } from 'lucide-react';
+import { MapPin, Coffee, Beer, Navigation, Sparkles, Loader2, Train, Bed } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Insight {
     title: string;
     description: string;
-    type: 'food' | 'drink' | 'activity';
+    type: 'food' | 'drink' | 'activity' | 'transport' | 'accommodation';
 }
 
-export default function NearbyActivities({ eventName, venueName }: { eventName: string, venueName: string }) {
+export default function NearbyActivities({ eventName, venueName, ageRestriction }: { eventName: string, venueName: string, ageRestriction?: string }) {
     const [insights, setInsights] = useState<Insight[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -19,18 +19,23 @@ export default function NearbyActivities({ eventName, venueName }: { eventName: 
             try {
                 const res = await fetch('/api/events/insights', {
                     method: 'POST',
-                    body: JSON.stringify({ eventName, venueName }),
+                    body: JSON.stringify({ eventName, venueName, ageRestriction }),
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await res.json();
-                if (data.insights) setInsights(data.insights);
+                if (data.insights && Array.isArray(data.insights)) {
+                    setInsights(data.insights);
+                } else {
+                    throw new Error("Invalid insights data");
+                }
             } catch (err) {
                 console.error(err);
                 // Fallback data if API fails
                 setInsights([
-                    { title: 'The Velo Lounge', description: 'Exclusive pre-show drinks 2 mins away.', type: 'drink' },
-                    { title: 'City Burger Co.', description: 'Best rated burger joint for a quick bite.', type: 'food' },
-                    { title: 'Central Park', description: 'Relax before the chaos starts.', type: 'activity' }
+                    { title: 'Local Station', description: 'Nearest transport hub 5 mins walk.', type: 'transport' },
+                    { title: 'The Velo Lounge', description: 'Exclusive pre-show drinks/snacks.', type: 'drink' },
+                    { title: 'Quick Bites Co.', description: 'Fast food for a quick energy boost.', type: 'food' },
+                    { title: 'City Hotel', description: 'Comfortable stay right next door.', type: 'accommodation' }
                 ]);
             } finally {
                 setLoading(false);
@@ -40,12 +45,14 @@ export default function NearbyActivities({ eventName, venueName }: { eventName: 
         if (eventName && venueName) {
             fetchInsights();
         }
-    }, [eventName, venueName]);
+    }, [eventName, venueName, ageRestriction]);
 
     const getIcon = (type: string) => {
         switch (type) {
             case 'food': return <Coffee className="text-amber-400" size={20} />;
             case 'drink': return <Beer className="text-velo-cyan" size={20} />;
+            case 'transport': return <Train className="text-emerald-400" size={20} />;
+            case 'accommodation': return <Bed className="text-indigo-400" size={20} />;
             default: return <Navigation className="text-velo-violet" size={20} />;
         }
     };
