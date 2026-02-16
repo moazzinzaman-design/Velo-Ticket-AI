@@ -12,7 +12,9 @@ export async function GET(
             return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
         }
 
+        console.log('Fetching event by ID:', id);
         const event = await eventAggregator.getEventById(id);
+        console.log('Event lookup result:', event ? 'Found' : 'Not found', event?.id, event?.title);
 
         if (!event) {
             return NextResponse.json({ error: 'Event not found' }, { status: 404 });

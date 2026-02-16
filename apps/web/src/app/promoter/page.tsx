@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import PromoterLayout from '../../components/promoter/PromoterLayout';
-import { ArrowUpRight, Ticket, Users, DollarSign, Calendar } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowUpRight, Ticket, Users, DollarSign, Calendar, Lock, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useEvents } from '../../hooks/useEvents';
+import BoostEventModal from '../../components/promoter/BoostEventModal';
 
 // Mock data for dashboard
 const metrics = [
@@ -23,6 +24,7 @@ const recentEvents = [
 
 export default function PromoterDashboard() {
     const { events, loading } = useEvents();
+    const [boostEvent, setBoostEvent] = useState<any | null>(null);
 
     return (
         <>
@@ -59,6 +61,32 @@ export default function PromoterDashboard() {
                         <div className="text-sm text-white/40">{metric.label}</div>
                     </motion.div>
                 ))}
+            </div>
+
+            {/* Advanced Analytics Teaser (Paywall) */}
+            <div className="relative mb-10 rounded-2xl overflow-hidden border border-white/10">
+                <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/40 flex flex-col items-center justify-center text-center p-6">
+                    <div className="w-16 h-16 rounded-full bg-velo-violet/20 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(139,92,246,0.2)]">
+                        <Lock size={32} className="text-velo-violet" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Unlock Advanced Insights</h3>
+                    <p className="text-white/60 max-w-md mb-6">
+                        Get real-time heatmaps, audience demographics, and conversion funnels to optimize your events.
+                    </p>
+                    <button className="bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-zinc-200 transition-colors shadow-lg shadow-white/10 flex items-center gap-2">
+                        Upgrade to Pro Analytics <span className="text-xs font-normal text-black/60">(£29/mo)</span>
+                    </button>
+                </div>
+
+                {/* Blurry Background Content */}
+                <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 opacity-30 pointer-events-none select-none">
+                    <div className="bg-white/5 p-6 rounded-xl border border-white/10 h-64 flex items-center justify-center">
+                        <div className="text-white/20 font-bold text-xl">Audience Heatmap</div>
+                    </div>
+                    <div className="bg-white/5 p-6 rounded-xl border border-white/10 h-64 flex items-center justify-center">
+                        <div className="text-white/20 font-bold text-xl">Conversion Funnel</div>
+                    </div>
+                </div>
             </div>
 
             {/* Recent Events Table */}
@@ -100,7 +128,13 @@ export default function PromoterDashboard() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-3">
-                                                <span className="text-sm text-white/60">{event.soldPercentage || 0}%</span>
+                                                <button
+                                                    onClick={() => setBoostEvent(event)}
+                                                    className="p-2 rounded-lg bg-velo-violet/10 text-velo-violet hover:bg-velo-violet hover:text-white transition-all text-xs font-bold px-3 flex items-center gap-1 group"
+                                                >
+                                                    <Zap size={12} className="group-hover:fill-current" /> Boost
+                                                </button>
+                                                <span className="text-sm text-white/60 w-12 text-right">{event.soldPercentage || 0}%</span>
                                                 <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
                                                     <div
                                                         className="h-full bg-gradient-to-r from-velo-cyan to-blue-500 rounded-full"
@@ -116,6 +150,15 @@ export default function PromoterDashboard() {
                     </table>
                 </div>
             </div>
+
+            <AnimatePresence>
+                {boostEvent && (
+                    <BoostEventModal
+                        eventTitle={boostEvent.title}
+                        onClose={() => setBoostEvent(null)}
+                    />
+                )}
+            </AnimatePresence>
         </>
     );
 }

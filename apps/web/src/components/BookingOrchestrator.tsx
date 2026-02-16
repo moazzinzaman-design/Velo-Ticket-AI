@@ -5,14 +5,19 @@ import { AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import SeatSelector from './SeatSelector';
 import EventDetailsModal from './EventDetailsModal';
+import GuestEmailModal from './GuestEmailModal';
 import { findBestVenue } from '../data/venueData';
 import { EmailService } from '../lib/email/EmailService';
 import { useUser } from '../hooks/useUser';
+import { createClient } from '../lib/supabase/client';
 
 export default function BookingOrchestrator() {
     const { isBookingOpen, selectedEvent, closeBooking, showDetails, setShowDetails } = useBooking();
     const { profile } = useUser();
     const [isProcessing, setIsProcessing] = React.useState(false);
+    const [guestEmail, setGuestEmail] = React.useState<string | null>(null);
+    const [showGuestModal, setShowGuestModal] = React.useState(false);
+    const [pendingCheckout, setPendingCheckout] = React.useState<{ seatIds: string[], total: number, addOns?: Record<string, number> } | null>(null);
 
     // Match event venue to the best available venue layout
     const venue = React.useMemo(() => {
@@ -38,13 +43,65 @@ export default function BookingOrchestrator() {
 
     const handleCheckout = async (seatIds: string[], total: number, addOns?: Record<string, number>) => {
         if (!selectedEvent) return;
+
+        // Check if user is authenticated
+        if (!profile || !profile.email) {
+            // Guest checkout - show email modal
+            setPendingCheckout({ seatIds, total, addOns });
+            setShowGuestModal(true);
+            return;
+        }
+
+        // User is authenticated, proceed directly
+        await processCheckout(seatIds, total, addOns, profile.email, profile.id);
+    };
+
+    const handleGuestContinue = async (email: string, createAccount?: boolean) => {
+        setGuestEmail(email);
+        setShowGuestModal(false);
+
+        // Optionally create account in background
+        if (createAccount) {
+            try {
+                const supabase = createClient();
+                // Note: In production, you'd want to handle password securely
+                // For now, we're just creating a placeholder account
+                await supabase.auth.signUp({
+                    email,
+                    password: Math.random().toString(36), // Generate temp password
+                    options: {
+                        emailRedirectTo: `${location.origin}/auth/callback`,
+                    },
+                });
+            } catch (error) {
+                console.error('Account creation error:', error);
+                // Continue with checkout anyway
+            }
+        }
+
+        // Proceed with checkout using guest email
+        if (pendingCheckout) {
+            await processCheckout(
+                pendingCheckout.seatIds,
+                pendingCheckout.total,
+                pendingCheckout.addOns,
+                email,
+                undefined // No user ID for guests
+            );
+        }
+    };
+
+    const processCheckout = async (
+        seatIds: string[],
+        total: number,
+        addOns: Record<string, number> | undefined,
+        userEmail: string,
+        userId?: string
+    ) => {
+        if (!selectedEvent) return;
         setIsProcessing(true);
 
-        // Use real user email from auth, fall back to empty string
-        console.log('Checkout Profile State:', profile);
-        const userEmail = (profile && profile.email) ? profile.email : '';
-
-        // Send booking confirmation email to the actual user
+        // Send booking confirmation email
         if (userEmail) {
             EmailService.sendBookingConfirmation(
                 userEmail,
@@ -64,8 +121,8 @@ export default function BookingOrchestrator() {
                     title: selectedEvent.title,
                     quantity: seatIds.length,
                     addOns,
-                    customerEmail: userEmail, // Pre-fill Stripe checkout email
-                    userId: profile?.id, // Pass user ID for webhook fulfillment
+                    customerEmail: userEmail,
+                    userId,
                 }),
             });
 
@@ -105,6 +162,15 @@ export default function BookingOrchestrator() {
                                 onConfirm={handleCheckout}
                             />
                         )
+                    )}
+                    {showGuestModal && (
+                        <GuestEmailModal
+                            onContinue={handleGuestContinue}
+                            onClose={() => {
+                                setShowGuestModal(false);
+                                setPendingCheckout(null);
+                            }}
+                        />
                     )}
                 </>
             )}

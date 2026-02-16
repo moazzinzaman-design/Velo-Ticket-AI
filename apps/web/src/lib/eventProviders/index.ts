@@ -41,8 +41,9 @@ export class EventAggregator {
 
     async searchEvents(params: EventSearchParams): Promise<RealEvent[]> {
         if (this.providers.length === 0) {
-            console.warn('No event provider API keys configured. Returning empty list (Real Data Strict Mode).');
-            return [];
+            console.warn('No event provider API keys configured. Using mock data (RealEvents).');
+            const { realEvents } = require('../../data/realEvents');
+            return realEvents;
         }
 
         // Fetch from all providers in parallel
@@ -69,7 +70,7 @@ export class EventAggregator {
     }
 
     async getEventById(id: string): Promise<RealEvent | null> {
-        // Try to identify provider from ID prefix if possible, otherwise try all
+        // 1. Try to identify provider from ID prefix if possible, otherwise try all
         for (const provider of this.providers) {
             try {
                 const event = await provider.getEvent(id);
@@ -78,7 +79,25 @@ export class EventAggregator {
                 console.warn(`Provider ${provider.name} failed to get event ${id}`, error);
             }
         }
+
+        // 2. Fallback: Check local realEvents (Mock Data)
+        // This ensures that if the user is seeing cached/mock events (e.g. ID "1", "2"), we can still load them.
+        const mockEvent = this.getMockEventById(id);
+        if (mockEvent) {
+            console.log(`Found event ${id} in mock data fallback.`);
+            return mockEvent;
+        }
+
         return null;
+    }
+
+    private getMockEventById(id: string | number): RealEvent | undefined {
+        // Import locally to avoid circular deps if any, or just use the import at top
+        const { realEvents } = require('../../data/realEvents');
+        console.log(`[getMockEventById] Searching in ${realEvents.length} mock events for ID: ${id}`);
+        const found = realEvents.find((e: RealEvent) => String(e.id) === String(id));
+        console.log(`[getMockEventById] Result:`, found ? `Found ${found.title}` : 'Not found');
+        return found;
     }
 
     /**
