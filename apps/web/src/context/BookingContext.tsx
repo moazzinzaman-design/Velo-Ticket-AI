@@ -11,6 +11,10 @@ interface EventData {
     time: string;
     price: number;
     image: string;
+    // Affiliate model fields
+    purchaseUrl?: string;
+    source?: 'skiddle' | 'ticketmaster' | 'seatgeek' | 'velo';
+    affiliateTracking?: string;
 }
 
 interface BookingContextType {
