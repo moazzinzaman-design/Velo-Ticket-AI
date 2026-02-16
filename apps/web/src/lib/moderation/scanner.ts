@@ -1,30 +1,33 @@
 import OpenAI from 'openai';
 
+// Initialize OpenAI instance only if API key is available
 let openaiInstance: OpenAI | null = null;
 
-function getOpenAI() {
-    if (!process.env.OPENAI_API_KEY) {
-        return null;
-    }
-    if (!openaiInstance) {
+function getOpenAIInstance(): OpenAI | null {
+    if (openaiInstance) return openaiInstance;
+
+    if (process.env.OPENAI_API_KEY) {
         openaiInstance = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
+        return openaiInstance;
     }
-    return openaiInstance;
+
+    console.warn('OPENAI_API_KEY not set. Content moderation will be disabled.');
+    return null;
 }
 
-export async function scanContent(text: string): Promise<{ flagged: boolean; reason?: string }> {
-    const openai = getOpenAI();
+export async function scanContent(content: string): Promise<{ isSafe: boolean; reason?: string }> {
+    const openai = getOpenAIInstance();
 
+    // If no OpenAI instance, skip moderation (allow content)
     if (!openai) {
-        console.warn('OPENAI_API_KEY not set. Skipping moderation.');
-        return { flagged: false };
+        return { isSafe: true };
     }
 
     try {
         const response = await openai.moderations.create({
-            input: text,
+            input: content,
         });
 
         const result = response.results[0];
