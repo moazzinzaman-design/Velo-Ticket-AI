@@ -171,7 +171,7 @@ export default function BoostEventModal({ eventTitle, onClose }: BoostEventModal
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-white/10 flex justify-end">
-                        <MagneticButton
+                        <button
                             onClick={handlePurchase}
                             disabled={!selectedPkg || isProcessing}
                             className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${!selectedPkg
@@ -181,7 +181,7 @@ export default function BoostEventModal({ eventTitle, onClose }: BoostEventModal
                         >
                             {isProcessing ? 'Processing...' : 'Continue to Payment'}
                             {!isProcessing && <ArrowRight size={18} />}
-                        </MagneticButton>
+                        </button>
                     </div>
                 </div>
             </motion.div>
