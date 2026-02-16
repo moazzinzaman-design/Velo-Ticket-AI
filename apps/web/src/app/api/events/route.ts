@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
         const { title, description, date, venue, city } = body;
 
         // 1. Content Moderation
-        const { flagged, reason } = await scanContent(`${title} ${description}`);
-        if (flagged) {
+        const { isSafe, reason } = await scanContent(`${title} ${description}`);
+        if (!isSafe) {
             return NextResponse.json({
                 error: 'Content violation detected.',
                 reason
