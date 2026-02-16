@@ -6,7 +6,7 @@ import { Bell, X, Mail, Check } from 'lucide-react';
 import { useWaitlist } from '../hooks/useWaitlist';
 
 interface WaitlistButtonProps {
-    eventId: number;
+    eventId: string | number;
     eventTitle: string;
 }
 

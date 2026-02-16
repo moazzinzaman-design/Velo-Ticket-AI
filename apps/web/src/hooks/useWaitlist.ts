@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export interface WaitlistEntry {
-    eventId: number;
+    eventId: string | number;
     eventTitle: string;
     email: string;
     joinedAt: string;
@@ -14,7 +14,7 @@ const STORAGE_KEY = 'velo_waitlist';
 
 export function useWaitlist() {
     const [entries, setEntries] = useState<WaitlistEntry[]>([]);
-    const [availableEvents, setAvailableEvents] = useState<number[]>([]);
+    const [availableEvents, setAvailableEvents] = useState<(string | number)[]>([]);
 
     // Load from localStorage on mount
     useEffect(() => {
@@ -33,7 +33,7 @@ export function useWaitlist() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }, [entries]);
 
-    const joinWaitlist = useCallback((eventId: number, eventTitle: string, email: string) => {
+    const joinWaitlist = useCallback((eventId: string | number, eventTitle: string, email: string) => {
         const newEntry: WaitlistEntry = {
             eventId,
             eventTitle,
@@ -53,15 +53,15 @@ export function useWaitlist() {
         return true;
     }, []);
 
-    const removeFromWaitlist = useCallback((eventId: number) => {
+    const removeFromWaitlist = useCallback((eventId: string | number) => {
         setEntries(prev => prev.filter(e => e.eventId !== eventId));
     }, []);
 
-    const isOnWaitlist = useCallback((eventId: number) => {
+    const isOnWaitlist = useCallback((eventId: string | number) => {
         return entries.some(e => e.eventId === eventId);
     }, [entries]);
 
-    const markAsNotified = useCallback((eventId: number) => {
+    const markAsNotified = useCallback((eventId: string | number) => {
         setEntries(prev => prev.map(e =>
             e.eventId === eventId ? { ...e, notified: true } : e
         ));
@@ -70,7 +70,7 @@ export function useWaitlist() {
     // Check if waitlisted events are now available
     // In a real app, this would check against a backend API
     // For now, we'll expose this for manual testing
-    const checkAvailability = useCallback((availableEventIds: number[]) => {
+    const checkAvailability = useCallback((availableEventIds: (string | number)[]) => {
         const newlyAvailable = entries
             .filter(e => !e.notified && availableEventIds.includes(e.eventId))
             .map(e => e.eventId);

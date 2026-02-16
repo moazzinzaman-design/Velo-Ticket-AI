@@ -23,7 +23,7 @@ export interface EventSearchParams {
 export interface EventProvider {
     name: string;
     search(params: EventSearchParams): Promise<RealEvent[]>;
-    getEventDetails?(id: string): Promise<RealEvent | null>;
+    getEvent(id: string): Promise<RealEvent | null>;
 }
 
 /**
@@ -38,6 +38,10 @@ export abstract class BaseEventProvider implements EventProvider {
     }
 
     abstract search(params: EventSearchParams): Promise<RealEvent[]>;
+
+    async getEvent(id: string): Promise<RealEvent | null> {
+        return null; // Default implementation
+    }
 
     protected async fetchWithRetry(
         url: string,

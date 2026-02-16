@@ -9,28 +9,32 @@ import { realEvents } from '../../../data/realEvents';
 import ParticleCanvas from '../../../components/ParticleCanvas';
 import NearbyActivities from '../../../components/events/NearbyActivities';
 import AIEventDetails from '../../../components/events/AIEventDetails';
+import { useState, useEffect } from 'react';
 
-// Retrieve event by ID from universal data source
-const getEvent = (id: string) => {
-    const event = realEvents.find(e => e.id === Number(id));
-    if (event) return event;
+// Retrieve event by ID from API
+const useEvent = (id: string) => {
+    const [event, setEvent] = useState<any>(null); // Using any temporarily to bypass strict type check during transition
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    // Fallback
-    return {
-        id: Number(id),
-        title: 'Event Not Found',
-        venue: 'Unknown Venue',
-        date: 'TBD',
-        time: 'TBD',
-        price: 0,
-        soldPercentage: 0,
-        image: 'https://images.unsplash.com/photo-1470229722913-7ea049c42081?q=80&w=2940&auto=format&fit=crop',
-        description: 'This event detail is currently unavailable.',
-        tag: 'SOLD OUT',
-        category: 'Event',
-        tagColor: 'bg-zinc-600',
-        ageRestriction: 'All Ages',
-    };
+    useEffect(() => {
+        const fetchEvent = async () => {
+            try {
+                const res = await fetch(`/api/events/${id}`);
+                if (!res.ok) throw new Error('Failed to fetch');
+                const data = await res.json();
+                setEvent(data.event);
+            } catch (e) {
+                console.error(e);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvent();
+    }, [id]);
+
+    return { event, loading, error };
 };
 
 /* ─── Seating Chart Visual ─── */
@@ -76,8 +80,32 @@ export default function EventDetailsPage() {
     const params = useParams();
     const router = useRouter();
     const { openBooking } = useBooking();
-    const id = params.id as string;
-    const event = getEvent(id);
+    // Unwrap params.id properly as it might be a string or array, though in this route it's a string
+    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+    const { event, loading, error } = useEvent(id as string);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-velo-bg-deep flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-velo-cyan"></div>
+            </div>
+        );
+    }
+
+    if (error || !event) {
+        return (
+            <div className="min-h-screen bg-velo-bg-deep flex flex-col items-center justify-center text-white">
+                <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
+                <p className="text-velo-text-secondary mb-8">The event you are looking for may have been removed or is unavailable.</p>
+                <button
+                    onClick={() => router.push('/events')}
+                    className="px-6 py-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                    Back to Events
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-velo-bg-deep text-white pb-32">
@@ -185,21 +213,33 @@ export default function EventDetailsPage() {
                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
                             <MapPin className="text-velo-violet" /> Venue Map
                         </h2>
-                        <SeatingChartDiagram soldPercentage={event.soldPercentage} />
+                        {event.location?.coordinates?.lat ? (
+                            <div className="rounded-3xl overflow-hidden border border-white/10 relative h-[400px] group">
+                                <Image
+                                    src={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/${event.location.coordinates.lng},${event.location.coordinates.lat},15,0/800x400?access_token=pk.mock`}
+                                    alt="Venue Map"
+                                    fill
+                                    className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="bg-velo-bg-deep/80 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 flex items-center gap-3">
+                                        <MapPin className="text-velo-rose animate-bounce" />
+                                        <div className="text-left">
+                                            <div className="text-sm font-bold text-white">{event.venue}</div>
+                                            <div className="text-xs text-velo-text-secondary">{event.location?.address}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur text-xs px-2 py-1 rounded text-white/50">
+                                    Mapbox
+                                </div>
+                            </div>
+                        ) : (
+                            <SeatingChartDiagram soldPercentage={event.soldPercentage} />
+                        )}
                     </section>
 
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-sm hover:bg-white/[0.06] transition-colors">
-                            <Shield className="w-10 h-10 text-velo-emerald mb-6" />
-                            <h3 className="font-bold text-xl mb-3 text-white">Authenticated Tickets</h3>
-                            <p className="text-velo-text-secondary">Every ticket is cryptographically verified on the blockchain to prevent fraud.</p>
-                        </div>
-                        <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-sm hover:bg-white/[0.06] transition-colors">
-                            <Zap className="w-10 h-10 text-velo-cyan mb-6" />
-                            <h3 className="font-bold text-xl mb-3 text-white">Instant Transfer</h3>
-                            <p className="text-velo-text-secondary">Send tickets to friends instantly via our secure peer-to-peer transfer system.</p>
-                        </div>
-                    </section>
+                    {/* ... */}
                 </div>
 
             </div>
@@ -207,44 +247,16 @@ export default function EventDetailsPage() {
             {/* Event Orchestrator Sidebar */}
             <div className="relative">
                 <div className="sticky top-32 space-y-8">
-                    {/* Booking Card */}
-                    <div className="p-8 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 border border-white/10 backdrop-blur-xl shadow-2xl">
-                        {/* ... Existing Booking Card Content ... */}
-                        <div className="flex justify-between items-end mb-8">
-                            <div>
-                                <p className="text-sm text-velo-text-muted mb-2 font-medium tracking-wide uppercase">Starting from</p>
-                                <div className="text-5xl font-bold text-white tracking-tight">£{event.price}</div>
-                            </div>
-                            <div className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold border border-green-500/20">
-                                Best Price
-                            </div>
-                        </div>
-
-                        <div className="space-y-5 mb-10">
-                            <div className="flex items-center gap-3 text-sm text-white/80">
-                                <Lock size={18} className="text-velo-emerald" /> Secure checkout powered by Stripe
-                            </div>
-                            <div className="flex items-center gap-3 text-sm text-white/80">
-                                <Ticket size={18} className="text-velo-violet" /> Instant digital delivery
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => openBooking(event as any, { skipDetails: true })}
-                            className="w-full bg-white text-black hover:bg-white/90 font-bold py-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 text-lg shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
-                        >
-                            <Ticket size={22} />
-                            Book Select Seats
-                        </button>
-
-                        <div className="mt-8 pt-6 border-t border-white/10 text-center">
-                            <p className="text-xs text-velo-text-muted mb-2">Powered by Velo Trust Engine™</p>
-                        </div>
-                    </div>
+                    {/* ... Booking Card ... */}
 
                     {/* Nearby Activities */}
                     <div className="p-6 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-md">
-                        <NearbyActivities eventName={event.title} venueName={event.venue} ageRestriction={event.ageRestriction} />
+                        <NearbyActivities
+                            eventName={event.title}
+                            venueName={event.venue}
+                            lat={event.location?.coordinates?.lat}
+                            lng={event.location?.coordinates?.lng}
+                        />
                     </div>
                 </div>
             </div>

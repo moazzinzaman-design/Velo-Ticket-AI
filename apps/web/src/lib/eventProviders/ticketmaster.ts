@@ -53,6 +53,25 @@ export class TicketmasterProvider extends BaseEventProvider {
         }
     }
 
+    async getEvent(id: string): Promise<RealEvent | null> {
+        if (!this.config.apiKey) return null;
+
+        // Strip prefix if present (e.g., "tm-Z698xZ2qZa")
+        const cleanId = id.replace('tm-', '');
+        const url = `https://app.ticketmaster.com/discovery/v2/events/${cleanId}.json?apikey=${this.config.apiKey}`;
+
+        try {
+            const response = await this.fetchWithRetry(url);
+            if (!response.ok) return null;
+
+            const event: TicketmasterEvent = await response.json();
+            return this.normalizeEvent(event, 0); // Index 0 as it's a single event
+        } catch (error) {
+            console.error('Ticketmaster getEvent error:', error);
+            return null;
+        }
+    }
+
     private buildSearchUrl(params: EventSearchParams): string {
         const baseUrl = 'https://app.ticketmaster.com/discovery/v2/events.json';
         const searchParams = new URLSearchParams({
@@ -83,7 +102,7 @@ export class TicketmasterProvider extends BaseEventProvider {
         const price = event.priceRanges?.[0]?.min || 50;
 
         return {
-            id: index + 2000, // Offset 2000 to avoid collision with Skiddle (1000+) and Static (1-100)
+            id: event.id, // Use actual Ticketmaster ID
             title: event.name,
             venue: venue?.name || 'TBA',
             location: {

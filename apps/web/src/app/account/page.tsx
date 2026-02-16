@@ -2,14 +2,21 @@
 
 import { useState } from 'react';
 import ProfileLayout from '../../components/account/ProfileLayout';
+import AuthForm from '../../components/account/AuthForm';
 import TicketWallet from '../../components/account/TicketWallet';
 import MembershipCard from '../../components/account/MembershipCard';
 import SettingsForm from '../../components/account/SettingsForm';
 import { useUser } from '../../hooks/useUser';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+const PaymentMethods = dynamic(() => import('../../components/account/PaymentMethods'));
+const NotificationPreferences = dynamic(() => import('../../components/account/NotificationPreferences'));
+const OrderHistory = dynamic(() => import('../../components/account/OrderHistory'));
+const ProfileSettings = dynamic(() => import('../../components/account/ProfileSettings'));
 
 export default function AccountPage() {
-    const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'membership' | 'settings'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'history' | 'membership' | 'settings'>('overview');
     const { profile, tickets, isVeloPlus, loading } = useUser();
 
     if (loading) {
@@ -17,7 +24,11 @@ export default function AccountPage() {
     }
 
     if (!profile) {
-        return <div className="min-h-screen pt-32 text-center text-white">Please sign in to view your account.</div>;
+        return (
+            <div className="min-h-screen pt-32 pb-20 px-4 flex flex-col items-center justify-center">
+                <AuthForm />
+            </div>
+        );
     }
 
     // Render content based on active tab
@@ -25,10 +36,20 @@ export default function AccountPage() {
         switch (activeTab) {
             case 'tickets':
                 return <TicketWallet />;
+            case 'history':
+                return <OrderHistory />;
             case 'membership':
                 return <MembershipCard />;
             case 'settings':
-                return <SettingsForm />;
+                return (
+                    <div className="space-y-12">
+                        <ProfileSettings />
+                        <div className="w-full border-t border-white/10" />
+                        <PaymentMethods />
+                        <div className="w-full border-t border-white/10" />
+                        <NotificationPreferences />
+                    </div>
+                );
             case 'overview':
             default:
                 return (

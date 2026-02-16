@@ -68,6 +68,19 @@ export class EventAggregator {
         return sorted.slice(0, params.limit || 50);
     }
 
+    async getEventById(id: string): Promise<RealEvent | null> {
+        // Try to identify provider from ID prefix if possible, otherwise try all
+        for (const provider of this.providers) {
+            try {
+                const event = await provider.getEvent(id);
+                if (event) return event;
+            } catch (error) {
+                console.warn(`Provider ${provider.name} failed to get event ${id}`, error);
+            }
+        }
+        return null;
+    }
+
     /**
      * Deduplicate events based on title + venue + date
      */

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the shape of our Event data (can be imported from types later)
 interface EventData {
-    id: number;
+    id: string | number;
     title: string;
     venue: string;
     date: string;

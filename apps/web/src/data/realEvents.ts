@@ -1,5 +1,5 @@
 export interface RealEvent {
-    id: number;
+    id: string | number;
     title: string;
     venue: string;
     location: {

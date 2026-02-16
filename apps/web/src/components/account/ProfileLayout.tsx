@@ -1,12 +1,12 @@
 'use client';
 
 import { useUser } from '../../hooks/useUser';
-import { Home, Ticket, Crown, Settings, LogOut } from 'lucide-react';
+import { Home, Ticket, Crown, Settings, LogOut, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 interface ProfileLayoutProps {
     children: React.ReactNode;
-    activeTab: 'overview' | 'tickets' | 'membership' | 'settings';
+    activeTab: 'overview' | 'tickets' | 'history' | 'membership' | 'settings';
     onTabChange: (tab: any) => void;
 }
 
@@ -16,6 +16,7 @@ export default function ProfileLayout({ children, activeTab, onTabChange }: Prof
     const menuItems = [
         { id: 'overview', label: 'Overview', icon: Home },
         { id: 'tickets', label: 'My Tickets', icon: Ticket },
+        { id: 'history', label: 'Order History', icon: Calendar },
         { id: 'membership', label: 'Membership', icon: Crown },
         { id: 'settings', label: 'Settings', icon: Settings },
     ];

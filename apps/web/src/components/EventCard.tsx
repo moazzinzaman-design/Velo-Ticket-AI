@@ -13,7 +13,7 @@ import PricingTierIndicator from './PricingTierIndicator';
 import HolographicCard from './visuals/HolographicCard';
 
 interface Event {
-    id: number;
+    id: string | number;
     title: string;
     venue: string;
     date: string;
