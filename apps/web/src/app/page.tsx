@@ -9,6 +9,7 @@ import ParticleCanvas from '../components/ParticleCanvas';
 import WaitlistButton from '../components/WaitlistButton';
 
 import ScrollReveal from '../components/visuals/ScrollReveal';
+import DemoModeBanner from '../components/DemoModeBanner';
 import { veloBus } from '../lib/veloBus';
 
 import { RealEvent } from '../data/realEvents';

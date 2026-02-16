@@ -2,8 +2,8 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { EmailService } from '../../../../lib/email/EmailService';
-import { AIMessageGenerator } from '../../../../lib/ai/generator';
+import { generateTicketPDF, TicketData } from '../../../../lib/tickets/pdfGenerator';
+import { sendTicketEmail } from '../../../../lib/email/ticketEmail';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2026-01-28.clover' as any,
@@ -66,12 +66,22 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const userId = session.metadata?.userId;
     const userEmail = session.customer_details?.email || session.metadata?.customerEmail;
     const eventTitle = session.metadata?.eventTitle || 'Event Ticket';
+    const eventId = session.metadata?.eventId || '';
+    const eventDate = session.metadata?.eventDate || 'TBD';
+    const eventTime = session.metadata?.eventTime || 'TBD';
+    const venueName = session.metadata?.venueName || 'Venue TBD';
+    const venueAddress = session.metadata?.venueAddress || '';
+
+    if (!userEmail) {
+        console.error('No email found for session:', session.id);
+        return;
+    }
 
     // Create Order Record
     const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-            user_id: userId || null, // Can be null if guest checkout (though we try to force auth)
+            user_id: userId || null,
             stripe_session_id: session.id,
             total_amount: session.amount_total,
             status: 'completed'
@@ -84,66 +94,90 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         throw new Error('Database error creating order');
     }
 
-    // Create Tickets
-    const tickets_to_insert = [];
+    // Generate Tickets
     const lineItems = expandedSession.line_items?.data || [];
+    const ticketsToGenerate: TicketData[] = [];
+    const ticketsToInsert = [];
 
+    let ticketNumber = 1;
     for (const item of lineItems) {
-        // Skip potential non-ticket items like fees or add-ons if needed, 
-        // but for now we treat main items as tickets.
-        // You might want to filter based on metadata or description.
-
-        // If specific quantity > 1, generate multiple tickets
         const quantity = item.quantity || 1;
 
         for (let i = 0; i < quantity; i++) {
-            const uniqueQr = `VELO-${session.id.slice(-6)}-${Math.random().toString(36).substring(2, 7)}`.toUpperCase();
+            const ticketId = `VELO-${session.id.slice(-6)}-${Math.random().toString(36).substring(2, 7)}`.toUpperCase();
 
-            tickets_to_insert.push({
+            const ticketData: TicketData = {
+                ticketId,
+                orderId: order.id,
+                eventTitle,
+                eventDate,
+                eventTime,
+                venueName,
+                venueAddress,
+                customerName: session.customer_details?.name || 'Guest',
+                customerEmail: userEmail,
+                seatInfo: session.metadata?.[`seat_${ticketNumber}`] || undefined,
+                ticketType: item.description || 'General Admission',
+                price: (item.amount_total || 0) / 100 / quantity
+            };
+
+            ticketsToGenerate.push(ticketData);
+
+            ticketsToInsert.push({
                 user_id: userId || null,
-                event_title: item.description || eventTitle,
-                price_paid: item.amount_total / quantity,
-                qr_code: uniqueQr,
+                event_title: eventTitle,
+                price_paid: ticketData.price,
+                qr_code: ticketId,
                 status: 'valid',
                 metadata: {
                     stripe_line_item_id: item.id,
-                    order_id: order.id
+                    order_id: order.id,
+                    event_id: eventId
                 }
             });
 
-            // Send email for each ticket? Or one email for all?
-            // EmailService currently handles single ticket. 
-            // We'll trigger it once per ticket for now, or optimise to send one summary email.
+            ticketNumber++;
         }
     }
 
-    if (tickets_to_insert.length > 0) {
+    // Store tickets in database
+    if (ticketsToInsert.length > 0) {
         const { error: ticketError } = await supabase
             .from('tickets')
-            .insert(tickets_to_insert);
+            .insert(ticketsToInsert);
 
         if (ticketError) {
             console.error('Failed to create tickets:', ticketError);
             throw new Error('Database error creating tickets');
         }
 
-        // Send confirmation email
-        if (userEmail) {
-            // Generate AI Hype Message
-            const aiMessage = await AIMessageGenerator.generateTicketHype(
-                eventTitle,
-                'Music Fan', // We don't have name easily here unless we query profile, fine for now
-                'Velo Venue'
-            );
+        // Generate PDF with all tickets
+        console.log(`Generating PDF for ${ticketsToGenerate.length} ticket(s)...`);
+        const ticketPDF = await generateTicketPDF(ticketsToGenerate[0]);
 
-            // Just sending one confirmation for the first ticket valid for now
-            // In production, you'd send a summary or iterate
-            await EmailService.sendBookingConfirmation(
-                userEmail,
+        // Send email with tickets
+        console.log(`Sending ticket email to ${userEmail}...`);
+        const emailResult = await sendTicketEmail(
+            {
+                to: userEmail,
+                customerName: session.customer_details?.name || 'Guest',
+                orderId: order.id,
                 eventTitle,
-                tickets_to_insert[0].qr_code,
-                aiMessage
-            );
+                eventDate,
+                eventTime,
+                venueName,
+                venueAddress,
+                ticketCount: ticketsToGenerate.length,
+                totalPrice: (session.amount_total || 0) / 100,
+                tickets: ticketsToGenerate
+            },
+            ticketPDF
+        );
+
+        if (emailResult.success) {
+            console.log(`✅ Tickets sent successfully to ${userEmail}`);
+        } else {
+            console.error(`❌ Failed to send tickets: ${emailResult.error}`);
         }
     }
 }
