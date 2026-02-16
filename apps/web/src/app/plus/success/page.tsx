@@ -8,9 +8,8 @@ import Link from 'next/link';
 import { useConfetti } from '../../../hooks/useConfetti';
 import LivingBackground from '../../../components/LivingBackground';
 
-export default function VeloPlusSuccessPage() {
+function VeloPlusSuccessContent() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const sessionId = searchParams.get('session_id');
     const { fire } = useConfetti();
 
@@ -63,5 +62,17 @@ export default function VeloPlusSuccessPage() {
                 </motion.div>
             </div>
         </div>
+    );
+}
+
+export default function VeloPlusSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen pt-28 pb-20 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-velo-cyan"></div>
+            </div>
+        }>
+            <VeloPlusSuccessContent />
+        </Suspense>
     );
 }

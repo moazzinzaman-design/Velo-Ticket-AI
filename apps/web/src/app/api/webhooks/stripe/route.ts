@@ -6,8 +6,8 @@ import { EmailService } from '../../../../lib/email/EmailService';
 import { AIMessageGenerator } from '../../../../lib/ai/generator';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2023-10-16',
-} as any);
+    apiVersion: '2026-01-28.clover' as any,
+});
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
