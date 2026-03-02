@@ -62,8 +62,7 @@ export const realEvents: RealEvent[] = [
         resaleTickets: [
             { id: 'resale-1', section: 'B', row: '12', price: 140 }, // Just below cap
             { id: 'resale-2', section: 'A', row: '4', price: 155 }
-        ],
-        ageRestriction: 'All Ages'
+        ]
     },
     {
         id: 2,
