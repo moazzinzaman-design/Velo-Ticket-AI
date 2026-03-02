@@ -50,8 +50,7 @@ export async function generateTicketPDF(ticketData: TicketData): Promise<Buffer>
     doc.setTextColor(255, 0, 0);
     doc.setFontSize(40);
     doc.setFont('helvetica', 'bold');
-    doc.saveGraphicsState();
-    doc.setGState(new doc.GState({ opacity: 0.15 }));
+    doc.setGState(new (doc.GState as any)({ opacity: 0.15 }));
 
     const watermarkText = 'SAMPLE TICKET';
     doc.text(watermarkText, 105, 150, {
